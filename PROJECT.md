@@ -196,8 +196,12 @@ silent edit would be invisible to sync and quietly lost. Storage migrates v2 to
 v3, stamping existing profiles as modified now, since on that device their
 current state is the freshest version that exists.
 
-**Deployment needs a Cloudflare account and `wrangler login`**, so it is not
-wired up — see `worker/README.md` for the four commands.
+**Deployment needs a Cloudflare account and `wrangler login`**, which is an
+interactive browser flow — see `worker/README.md` for the four commands. The
+KV namespace is created and its id is in `wrangler.toml`; a namespace id is a
+resource identifier, not a credential (access needs an account token), so it
+is committed. Still to run: `wrangler secret put SYNC_SECRET` and
+`wrangler deploy`.
 
 ## Visual design
 
@@ -244,7 +248,10 @@ things to their original position rather than appending them back at the end.
 - Boss acts on a fixed cycle, not the client's randomised timing.
 - Both sides fire charged moves the instant energy allows.
 - Where only one trainer profile is selected, group size is still N identical
-  copies of that party — "could three people like me do this".
+  copies of that party — "could four people like me do this". Group sizes run
+  1–4 (`GROUP_SIZES` in `src/ui/Results.tsx`), stopping there because above
+  four the question stops being "do we own the Pokémon" and becomes "will
+  strangers show up", which the app cannot answer.
 - No input delay between moves, so DPS is a clean ceiling. An earlier 500ms
   default was removed: as a flat per-move cost it halved the output of 1000ms
   fast moves, which is not a realistic penalty.
@@ -548,3 +555,71 @@ Four things the naive version got wrong, all fixed:
 Ranked by gain per Elite TM, with free upgrades listed first, and the best
 Elite-free alternative always shown alongside so the recommendation can be
 declined.
+
+
+### Bosses outside the rotation — BUILT
+
+`bosses.json` is a snapshot from `npm run fetch:bosses`, so the app could only
+answer "what can we fight tonight", never "what should we build for next
+month's legendary" — the question with enough lead time to act on. **Another
+boss** on the Boss tab builds one from any species and any tier.
+
+The tier is chosen by hand, not inferred. Tier is what sets boss HP and the
+battle timer, and nothing knows it before a raid goes live; guessing "probably
+tier 5" would silently produce a wrong answer with no way to notice.
+
+Movesets default the way the rotation feed does — the species' first listed
+pair, never an Elite-TM move. A boss with a legacy moveset is the exception,
+and assuming one would understate how fast a team faints.
+
+Two things this surfaced:
+
+- **Mega bosses were named as their base form** everywhere ("Can we beat
+  Charizard?"), which is a different fight from Mega Charizard X. `bossName()`
+  now names the mega.
+- **Smeargle has no moves in the Game Master** (it learns via Sketch) and was
+  selectable, producing a roster entry with `undefined` moves that threw the
+  moment it was simulated. Moveless forms are excluded from the species list
+  and from scan results.
+
+### Bench gaps — BUILT
+
+`src/engine/bench.ts`, surfaced under the TM advice on the **TMs** tab. The
+TM section answers "is this moveset worth a TM" for Pokémon you have; this
+answers which fights you are not equipped for at all, and what to go and get.
+
+Both sides run through the same simulation, so a candidate's DPS is directly
+comparable to your own attacker's rather than being a different kind of
+number. Candidates are rated at level 40 with perfect IVs — not what you first
+catch, but what the Pokémon becomes, and the same yardstick for everyone.
+
+A cheap closed-form pass (`cycleDps`) shortlists 40 species per boss and only
+those get a full simulation; memoised by defender type combination, since a
+rotation routinely has several bosses that defend identically. 45ms for the
+whole rotation.
+
+**The first version was useless, and measuring it is what showed that.** Every
+boss came back at 30–33% coverage, and the advice was "go get Calyrex Shadow
+Rider, Hoopa Unbound, Deoxys Attack". A number that is the same for everyone
+discriminates nothing, and a shopping list nobody can shop from is not advice.
+Three fixes:
+
+- **Rarity is now in the bundle** (format 5; `pokemonClass` from the dump,
+  packed as an index). Mythicals are excluded outright — quest-gated, one per
+  account, cannot be farmed. Legendaries and Ultra Beasts stay, because
+  raiding one is exactly the action this list exists to prompt, but they are
+  labelled "from raids".
+- **Coverage is measured against the best *farmable* species**, not the best
+  overall. Otherwise every roster is measured against Mewtwo and the number
+  stops reflecting anything the user can change.
+- **The list is 2 farmable + 1 rare**, not the top 3. All-legendary reads as
+  "you cannot win"; no-legendary hides the fastest real improvement.
+
+**Battle-only forms are a hand-maintained exclusion, and there is no data
+signal for it.** Galarian Darmanitan (Zen) ranked as the best farmable Steel
+counter; Palafin (Hero) ranks similarly. These are mid-battle transformations
+Pokémon GO does not implement, but the dump marks them `isDeployable` and
+`isTradable` exactly like every other form, so nothing distinguishes them.
+`BATTLE_ONLY_FORMS` is a judgement call, deliberately limited to forms that
+actually rank highly enough to be suggested. If GO ever releases one, delete
+it from the set.

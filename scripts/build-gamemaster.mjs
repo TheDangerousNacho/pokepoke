@@ -31,6 +31,9 @@ const TYPES = [
 
 const shortType = (t) => t.replace('POKEMON_TYPE_', '');
 
+/** Packed as an index; order is the wire format and must not be reordered. */
+const RARITIES = ['NORMAL', 'LEGENDARY', 'MYTHIC', 'ULTRA_BEAST'];
+
 async function ensureVendor() {
   try {
     await stat(VENDOR);
@@ -161,6 +164,9 @@ function buildSpecies(templates, resolveMove) {
         eliteChargedMoves: (p.eliteCinematicMove ?? []).map(resolveMove),
         // Shadow-eligible species carry a `shadow` block in the dump.
         hasShadow: Boolean(p.shadow),
+        // NORMAL / LEGENDARY / MYTHIC / ULTRA_BEAST. How hard a species is to
+        // get is the difference between advice and a wish list.
+        rarity: (p.pokemonClass ?? 'POKEMON_CLASS_NORMAL').replace('POKEMON_CLASS_', ''),
         megas: (p.tempEvoOverrides ?? [])
           .filter((o) => o.stats)
           .map((o) => ({
@@ -283,6 +289,11 @@ function pack(bundle) {
             m.durationMs, m.damageWindowStartMs, m.damageWindowEndMs];
   });
 
+  const unknownRarity = Object.values(bundle.species).find((s) => !RARITIES.includes(s.rarity));
+  if (unknownRarity) {
+    throw new Error(`${unknownRarity.id}: unknown pokemonClass ${unknownRarity.rarity}`);
+  }
+
   const species = Object.values(bundle.species).map((s) => [
     s.id,
     // For a base form id === pokemonId and form is null; for a variant
@@ -295,12 +306,13 @@ function pack(bundle) {
     s.fastMoves.map(ref), s.chargedMoves.map(ref),
     s.eliteFastMoves.map(ref), s.eliteChargedMoves.map(ref),
     s.hasShadow ? 1 : 0,
+    RARITIES.indexOf(s.rarity),
     s.megas.map((m) => [m.id, m.types.map(t), m.baseAttack, m.baseDefense, m.baseStamina]),
     s.familyId === null ? -1 : familyIndex.get(s.familyId),
   ]);
 
   return {
-    format: 4,
+    format: 5,
     source: bundle.source,
     types: bundle.types,
     typeChart: bundle.types.map((name) => bundle.typeChart[name]),

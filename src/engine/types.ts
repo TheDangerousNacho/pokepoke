@@ -26,6 +26,8 @@ export interface MegaForm {
   baseStamina: number;
 }
 
+export type Rarity = 'NORMAL' | 'LEGENDARY' | 'MYTHIC' | 'ULTRA_BEAST';
+
 export interface Species {
   /** Bundle key: the base form uses `pokemonId`, variants use their form name. */
   id: string;
@@ -44,6 +46,9 @@ export interface Species {
   eliteFastMoves: string[];
   eliteChargedMoves: string[];
   hasShadow: boolean;
+  /** How hard this species is to obtain. Legendaries and Ultra Beasts come
+   *  from raids; Mythicals are quest-gated and usually one per account. */
+  rarity: Rarity;
   megas: MegaForm[];
 }
 

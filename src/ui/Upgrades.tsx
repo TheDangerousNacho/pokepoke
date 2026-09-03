@@ -3,6 +3,7 @@ import { useDeferredCompute } from './useDeferredCompute';
 import type { BattleConditions } from '../engine/damage';
 import type { RaidBossSpec, RosterEntry } from '../engine/stats';
 import { rankUpgrades, type MoveUpgrade } from '../engine/upgrades';
+import { BenchGaps } from './BenchGaps';
 import { BOSSES, type BossListEntry } from './BossPicker';
 import { bossName, moveName, speciesName } from './format';
 
@@ -73,6 +74,8 @@ export function Upgrades({ roster, selectedBoss, conditions }: Props) {
         tries, not a price. Elite TMs let you pick, and are ranked by gain per
         TM spent because that's the scarce one.
       </p>
+
+      <BenchGaps roster={roster} bosses={bosses} conditions={conditions} />
     </>
   );
 }

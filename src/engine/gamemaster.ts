@@ -1,5 +1,5 @@
 import packed from '../data/gamemaster.json';
-import type { GameMaster, MegaForm, Move, PokemonType, Species, WeatherCondition } from './types';
+import type { GameMaster, MegaForm, Move, PokemonType, Rarity, Species, WeatherCondition } from './types';
 
 /**
  * The shipped bundle is packed: move names are interned into one id table and
@@ -17,7 +17,7 @@ type PackedSpecies = [
   id: string, basePokemonId: string | null, dex: number, types: number[],
   atk: number, def: number, sta: number,
   fast: number[], charged: number[], eliteFast: number[], eliteCharged: number[],
-  hasShadow: number, megas: PackedMega[], family: number,
+  hasShadow: number, rarity: number, megas: PackedMega[], family: number,
 ];
 
 interface PackedBundle {
@@ -36,8 +36,11 @@ interface PackedBundle {
   species: PackedSpecies[];
 }
 
+/** Packed as an index by the build script; the order is the wire format. */
+const RARITIES: Rarity[] = ['NORMAL', 'LEGENDARY', 'MYTHIC', 'ULTRA_BEAST'];
+
 function unpack(p: PackedBundle): GameMaster {
-  if (p.format !== 4) {
+  if (p.format !== 5) {
     throw new Error(`gamemaster.json is format ${p.format}; run \`npm run build:gm\``);
   }
   const type = (i: number) => p.types[i];
@@ -56,7 +59,7 @@ function unpack(p: PackedBundle): GameMaster {
   const species: Record<string, Species> = {};
   for (const s of p.species) {
     const [id, basePokemonId, dex, types, baseAttack, baseDefense, baseStamina,
-           fast, charged, eliteFast, eliteCharged, hasShadow, megas, family] = s;
+           fast, charged, eliteFast, eliteCharged, hasShadow, rarity, megas, family] = s;
     const name = (i: number) => p.moveIds[i];
 
     species[id] = {
@@ -73,6 +76,7 @@ function unpack(p: PackedBundle): GameMaster {
       eliteFastMoves: eliteFast.map(name),
       eliteChargedMoves: eliteCharged.map(name),
       hasShadow: hasShadow === 1,
+      rarity: RARITIES[rarity],
       megas: megas.map(([mid, mtypes, atk, def, sta]): MegaForm => ({
         id: mid,
         types: mtypes.map(type),
