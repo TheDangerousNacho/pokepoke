@@ -7,9 +7,11 @@ import {
 interface Props {
   store: ProfileStore;
   onChange: (store: ProfileStore) => void;
+  /** Applies a change that can be taken back, for destructive edits. */
+  onUndoableChange: (label: string, store: ProfileStore) => void;
 }
 
-export function ProfileBar({ store, onChange }: Props) {
+export function ProfileBar({ store, onChange, onUndoableChange }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<ImportPreview | null>(null);
   const [decisions, setDecisions] = useState<Record<string, ImportDecision>>({});
@@ -83,11 +85,9 @@ export function ProfileBar({ store, onChange }: Props) {
         <button
           className="ghost danger"
           disabled={store.profiles.length === 1}
-          onClick={() => {
-            if (confirm(`Delete ${current.name} and their ${current.roster.length} Pokémon?`)) {
-              onChange(removeProfile(store, current.id));
-            }
-          }}
+          onClick={() =>
+            onUndoableChange(`Deleted ${current.name}`, removeProfile(store, current.id))
+          }
         >
           Delete
         </button>

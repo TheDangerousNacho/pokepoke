@@ -1,190 +1,310 @@
 {
-  "source": "https://fight.pokebattler.com/raids/defenders/{boss}/levels/RAID_LEVEL_5/...",
-  "fetchedAt": "2026-09-02",
+  "source": "https://fight.pokebattler.com/raids/defenders/{boss}/levels/{tier}/...",
+  "fetchedAt": "2026-09-03",
   "attackerLevel": 40,
   "ivs": "15/15/15",
   "weather": "NO_WEATHER",
-  "notes": "Pokebattler Monte Carlo with randomised boss moveset and their dodge model. Not a no-dodge baseline.",
+  "notes": "Pokebattler Monte Carlo with randomised boss moveset and their dodge model; not a no-dodge baseline. Covers tiers 1, 3 and 5 so each bossCpm (0.5974, 0.73, 0.79) is exercised. Shadows are included, which also checks our shadow stat multipliers. Megas are excluded: whether a mega boosts itself is uncertain and would muddy the comparison.",
   "fixtures": [
     {
       "boss": "REGICE",
       "tier": "5",
+      "attacker": "ZAMAZENTA_CROWNED_SHIELD",
+      "isShadow": false,
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "BEHEMOTH_BASH",
+      "estimator": 2.3008,
+      "edps": 21.373
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "ZACIAN_CROWNED_SWORD",
+      "isShadow": false,
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "BEHEMOTH_BLADE",
+      "estimator": 2.3168,
+      "edps": 21.458
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "NECROZMA_DUSK_MANE",
+      "isShadow": false,
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "SUNSTEEL_STRIKE",
+      "estimator": 2.4116,
+      "edps": 20.555
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "NECROZMA_DUSK_MANE",
+      "isShadow": false,
+      "fastMove": "PSYCHO_CUT_FAST",
+      "chargedMove": "SUNSTEEL_STRIKE",
+      "estimator": 2.5287,
+      "edps": 19.668
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
       "attacker": "KELDEO",
+      "isShadow": false,
       "fastMove": "LOW_KICK_FAST",
       "chargedMove": "SECRET_SWORD",
       "estimator": 2.5378,
-      "edps": 19.421,
-      "tdo": 177.0
+      "edps": 19.421
     },
     {
       "boss": "REGICE",
       "tier": "5",
-      "attacker": "KELDEO",
-      "fastMove": "POISON_JAB_FAST",
-      "chargedMove": "SECRET_SWORD",
-      "estimator": 3.0223,
-      "edps": 16.306,
-      "tdo": 177.0
+      "attacker": "ZAMAZENTA_CROWNED_SHIELD",
+      "isShadow": false,
+      "fastMove": "ICE_FANG_FAST",
+      "chargedMove": "BEHEMOTH_BASH",
+      "estimator": 2.5497,
+      "edps": 19.238
     },
     {
-      "boss": "REGICE",
+      "boss": "REGIROCK",
       "tier": "5",
-      "attacker": "RESHIRAM",
-      "fastMove": "FIRE_FANG_FAST",
-      "chargedMove": "FUSION_FLARE",
-      "estimator": 3.0624,
-      "edps": 16.017,
-      "tdo": 173.0
+      "attacker": "ZACIAN_CROWNED_SWORD",
+      "isShadow": false,
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "BEHEMOTH_BLADE",
+      "estimator": 2.2322,
+      "edps": 22.201
     },
     {
-      "boss": "REGICE",
+      "boss": "REGIROCK",
       "tier": "5",
-      "attacker": "KELDEO",
-      "fastMove": "LOW_KICK_FAST",
-      "chargedMove": "SACRED_SWORD",
-      "estimator": 3.0957,
-      "edps": 15.903,
-      "tdo": 177.0
+      "attacker": "ZAMAZENTA_CROWNED_SHIELD",
+      "isShadow": false,
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "BEHEMOTH_BASH",
+      "estimator": 2.2416,
+      "edps": 21.991
     },
     {
-      "boss": "REGICE",
+      "boss": "REGIROCK",
       "tier": "5",
-      "attacker": "METAGROSS",
-      "fastMove": "BULLET_PUNCH_FAST",
-      "chargedMove": "METEOR_MASH",
-      "estimator": 3.2903,
-      "edps": 15.02,
-      "tdo": 162.0
+      "attacker": "NECROZMA_DUSK_MANE",
+      "isShadow": false,
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "SUNSTEEL_STRIKE",
+      "estimator": 2.3156,
+      "edps": 21.417
     },
     {
-      "boss": "REGICE",
+      "boss": "REGIROCK",
       "tier": "5",
-      "attacker": "BLACEPHALON",
-      "fastMove": "INCINERATE_FAST",
-      "chargedMove": "MIND_BLOWN",
-      "estimator": 3.3076,
-      "edps": 16.069,
-      "tdo": 124.0
+      "attacker": "NECROZMA_DUSK_MANE",
+      "isShadow": false,
+      "fastMove": "PSYCHO_CUT_FAST",
+      "chargedMove": "SUNSTEEL_STRIKE",
+      "estimator": 2.3973,
+      "edps": 20.673
+    },
+    {
+      "boss": "REGIROCK",
+      "tier": "5",
+      "attacker": "ZAMAZENTA_CROWNED_SHIELD",
+      "isShadow": false,
+      "fastMove": "ICE_FANG_FAST",
+      "chargedMove": "BEHEMOTH_BASH",
+      "estimator": 2.4346,
+      "edps": 20.246
     },
     {
       "boss": "REGIROCK",
       "tier": "5",
       "attacker": "KELDEO",
+      "isShadow": false,
       "fastMove": "LOW_KICK_FAST",
       "chargedMove": "SECRET_SWORD",
       "estimator": 2.5654,
-      "edps": 19.31,
-      "tdo": 177.0
-    },
-    {
-      "boss": "REGIROCK",
-      "tier": "5",
-      "attacker": "GROUDON",
-      "fastMove": "MUD_SHOT_FAST",
-      "chargedMove": "PRECIPICE_BLADES",
-      "estimator": 3.1188,
-      "edps": 15.783,
-      "tdo": 173.0
-    },
-    {
-      "boss": "REGIROCK",
-      "tier": "5",
-      "attacker": "KELDEO",
-      "fastMove": "LOW_KICK_FAST",
-      "chargedMove": "SACRED_SWORD",
-      "estimator": 3.1189,
-      "edps": 15.825,
-      "tdo": 177.0
-    },
-    {
-      "boss": "REGIROCK",
-      "tier": "5",
-      "attacker": "METAGROSS",
-      "fastMove": "BULLET_PUNCH_FAST",
-      "chargedMove": "METEOR_MASH",
-      "estimator": 3.1733,
-      "edps": 15.532,
-      "tdo": 162.0
-    },
-    {
-      "boss": "REGIROCK",
-      "tier": "5",
-      "attacker": "KELDEO",
-      "fastMove": "POISON_JAB_FAST",
-      "chargedMove": "SECRET_SWORD",
-      "estimator": 3.2822,
-      "edps": 15.031,
-      "tdo": 177.0
-    },
-    {
-      "boss": "REGIROCK",
-      "tier": "5",
-      "attacker": "METAGROSS",
-      "fastMove": "FURY_CUTTER_FAST",
-      "chargedMove": "METEOR_MASH",
-      "estimator": 3.3037,
-      "edps": 14.931,
-      "tdo": 162.0
+      "edps": 19.31
     },
     {
       "boss": "REGISTEEL",
       "tier": "5",
       "attacker": "BLACEPHALON",
+      "isShadow": false,
       "fastMove": "INCINERATE_FAST",
       "chargedMove": "MIND_BLOWN",
       "estimator": 2.2909,
-      "edps": 21.706,
-      "tdo": 124.0
-    },
-    {
-      "boss": "REGISTEEL",
-      "tier": "5",
-      "attacker": "KELDEO",
-      "fastMove": "LOW_KICK_FAST",
-      "chargedMove": "SECRET_SWORD",
-      "estimator": 2.3442,
-      "edps": 21.113,
-      "tdo": 177.0
-    },
-    {
-      "boss": "REGISTEEL",
-      "tier": "5",
-      "attacker": "BLACEPHALON",
-      "fastMove": "ASTONISH_FAST",
-      "chargedMove": "MIND_BLOWN",
-      "estimator": 2.3817,
-      "edps": 20.839,
-      "tdo": 124.0
+      "edps": 21.706
     },
     {
       "boss": "REGISTEEL",
       "tier": "5",
       "attacker": "RESHIRAM",
+      "isShadow": true,
       "fastMove": "FIRE_FANG_FAST",
       "chargedMove": "FUSION_FLARE",
-      "estimator": 2.6373,
-      "edps": 18.749,
-      "tdo": 173.0
+      "estimator": 2.3231,
+      "edps": 21.283
     },
     {
       "boss": "REGISTEEL",
       "tier": "5",
-      "attacker": "LUCARIO",
-      "fastMove": "FORCE_PALM_FAST",
-      "chargedMove": "AURA_SPHERE",
-      "estimator": 2.7545,
-      "edps": 17.928,
-      "tdo": 147.0
+      "attacker": "KELDEO",
+      "isShadow": false,
+      "fastMove": "LOW_KICK_FAST",
+      "chargedMove": "SECRET_SWORD",
+      "estimator": 2.3442,
+      "edps": 21.113
     },
     {
       "boss": "REGISTEEL",
       "tier": "5",
       "attacker": "BLACEPHALON",
-      "fastMove": "INCINERATE_FAST",
-      "chargedMove": "MYSTICAL_FIRE",
-      "estimator": 2.7735,
-      "edps": 17.894,
-      "tdo": 124.0
+      "isShadow": false,
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "MIND_BLOWN",
+      "estimator": 2.3817,
+      "edps": 20.839
+    },
+    {
+      "boss": "REGISTEEL",
+      "tier": "5",
+      "attacker": "CHANDELURE",
+      "isShadow": true,
+      "fastMove": "FIRE_SPIN_FAST",
+      "chargedMove": "OVERHEAT",
+      "estimator": 2.4777,
+      "edps": 19.997
+    },
+    {
+      "boss": "REGISTEEL",
+      "tier": "5",
+      "attacker": "RESHIRAM",
+      "isShadow": true,
+      "fastMove": "FIRE_FANG_FAST",
+      "chargedMove": "OVERHEAT",
+      "estimator": 2.5318,
+      "edps": 19.513
+    },
+    {
+      "boss": "DRATINI",
+      "tier": "1",
+      "attacker": "HAXORUS",
+      "isShadow": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "BREAKING_SWIPE",
+      "estimator": 0.0444,
+      "edps": 79.806
+    },
+    {
+      "boss": "DRATINI",
+      "tier": "1",
+      "attacker": "HAXORUS",
+      "isShadow": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "DRAGON_CLAW",
+      "estimator": 0.0476,
+      "edps": 74.577
+    },
+    {
+      "boss": "DRATINI",
+      "tier": "1",
+      "attacker": "GARCHOMP",
+      "isShadow": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "BREAKING_SWIPE",
+      "estimator": 0.0492,
+      "edps": 76.073
+    },
+    {
+      "boss": "DRATINI",
+      "tier": "1",
+      "attacker": "SALAMENCE",
+      "isShadow": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "FLY",
+      "estimator": 0.05,
+      "edps": 72.238
+    },
+    {
+      "boss": "DRATINI",
+      "tier": "1",
+      "attacker": "DRAGONITE",
+      "isShadow": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "DRAGON_PULSE",
+      "estimator": 0.0525,
+      "edps": 73.401
+    },
+    {
+      "boss": "DRATINI",
+      "tier": "1",
+      "attacker": "EXEGGUTOR_ALOLA",
+      "isShadow": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "DRAGON_PULSE",
+      "estimator": 0.0528,
+      "edps": 65.066
+    },
+    {
+      "boss": "PASSIMIAN",
+      "tier": "3",
+      "attacker": "MEWTWO",
+      "isShadow": true,
+      "fastMove": "CONFUSION_FAST",
+      "chargedMove": "PSYSTRIKE",
+      "estimator": 0.4343,
+      "edps": 46.754
+    },
+    {
+      "boss": "PASSIMIAN",
+      "tier": "3",
+      "attacker": "MEWTWO",
+      "isShadow": true,
+      "fastMove": "PSYCHO_CUT_FAST",
+      "chargedMove": "PSYSTRIKE",
+      "estimator": 0.4447,
+      "edps": 46.293
+    },
+    {
+      "boss": "PASSIMIAN",
+      "tier": "3",
+      "attacker": "MEWTWO",
+      "isShadow": true,
+      "fastMove": "CONFUSION_FAST",
+      "chargedMove": "PSYCHIC",
+      "estimator": 0.4701,
+      "edps": 43.111
+    },
+    {
+      "boss": "PASSIMIAN",
+      "tier": "3",
+      "attacker": "MEWTWO",
+      "isShadow": true,
+      "fastMove": "PSYCHO_CUT_FAST",
+      "chargedMove": "PSYCHIC",
+      "estimator": 0.4867,
+      "edps": 42.19
+    },
+    {
+      "boss": "PASSIMIAN",
+      "tier": "3",
+      "attacker": "MOLTRES",
+      "isShadow": true,
+      "fastMove": "WING_ATTACK_FAST",
+      "chargedMove": "FLY",
+      "estimator": 0.5005,
+      "edps": 40.024
+    },
+    {
+      "boss": "PASSIMIAN",
+      "tier": "3",
+      "attacker": "RAYQUAZA",
+      "isShadow": false,
+      "fastMove": "AIR_SLASH_FAST",
+      "chargedMove": "DRAGON_ASCENT",
+      "estimator": 0.5026,
+      "edps": 39.846
     }
   ]
 }

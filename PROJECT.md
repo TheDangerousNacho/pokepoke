@@ -156,6 +156,33 @@ nested under `attackers[0].randomMove.defenders[]` — confusingly, "defenders"
 there means the attackers. Free, no account needed, but only for bosses
 currently in rotation.
 
+The set covers **tiers 1, 3 and 5** (30 matchups, 5 bosses), so each `bossCpm`
+value is exercised rather than only tier 5's. Agreement is asserted **per tier
+as well as overall**, which is what makes those constants testable: a wrong
+`bossCpm` shows up as one tier's mean sitting apart from the others, which an
+overall average would hide.
+
+    overall  mean 0.898, range 0.81-1.01
+    tier 1   mean 0.870        tier 3  mean 0.955        tier 5  mean 0.888
+
+Shadow attackers are included, which also checks the shadow stat multipliers.
+Megas are excluded: whether a mega boosts itself is uncertain, and guessing
+would muddy a validation baseline.
+
+## Recovering from mistakes
+
+**Error boundary.** A render error used to leave a blank page. On a phone that
+has no console and no devtools, and the only recovery anyone would find is
+clearing site data — which silently destroys every roster. `ErrorBoundary` now
+catches it, says plainly that the rosters are untouched, and offers **Download
+my data before** offering Reset. Reset is deliberately the last option on the
+page rather than the obvious button.
+
+**Undo.** Deleting a Pokémon, a party or a whole trainer snapshots the store
+first and offers a single undo for twelve seconds. Snapshotting the whole store
+rather than the deleted item means one mechanism covers all three, and restores
+things to their original position rather than appending them back at the end.
+
 ### Known simplifications (all bias toward underestimating the player)
 
 - No dodging; every boss hit lands in full.

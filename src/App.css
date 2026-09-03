@@ -158,3 +158,24 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .picker-results button:hover { background: var(--surface-2); }
 
 .empty { text-align: center; color: var(--muted); padding: 28px 12px; }
+
+.undo-bar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  /* Clears the tab bar, which is 44px plus its own safe-area padding. */
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  max-width: 616px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.25);
+  z-index: 20;
+  font-size: 14px;
+}
+.undo-bar button { padding: 6px 10px; font-size: 14px; }

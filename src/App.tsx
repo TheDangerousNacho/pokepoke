@@ -31,6 +31,15 @@ const WEATHER: Array<{ value: WeatherCondition | 'NONE'; label: string }> = [
 
 export default function App() {
   const [store, setStore] = useState<ProfileStore>(loadStore);
+  /**
+   * One level of undo for destructive edits.
+   *
+   * Snapshotting the whole store rather than the deleted item means the same
+   * mechanism covers removing a Pokémon, a party and a whole trainer, and it
+   * restores them to exactly where they were rather than appending them back
+   * at the end.
+   */
+  const [undo, setUndo] = useState<{ label: string; store: ProfileStore } | null>(null);
   const [tab, setTab] = useState<Tab>('boss');
   const [boss, setBoss] = useState<BossListEntry | null>(null);
   const [weather, setWeather] = useState<WeatherCondition | 'NONE'>('NONE');
@@ -38,6 +47,20 @@ export default function App() {
 
   // Persist on every change; there is no explicit save button by design.
   useEffect(() => saveStore(store), [store]);
+
+  // Let an undo offer lapse rather than lingering forever. Long enough to
+  // notice a mistake, short enough not to become furniture.
+  useEffect(() => {
+    if (!undo) return;
+    const timer = setTimeout(() => setUndo(null), 12_000);
+    return () => clearTimeout(timer);
+  }, [undo]);
+
+  /** Applies a change, keeping the previous store so it can be taken back. */
+  const undoable = (label: string, next: ProfileStore) => {
+    setUndo({ label, store });
+    setStore(next);
+  };
 
   const profile = activeProfile(store);
   const conditions = useMemo<BattleConditions>(
@@ -91,15 +114,22 @@ export default function App() {
 
       {tab === 'roster' && (
         <>
-          <ProfileBar store={store} onChange={setStore} />
+          <ProfileBar store={store} onChange={setStore} onUndoableChange={undoable} />
           <PartyManager
             profile={profile}
             onSave={(party) => setStore(saveParty(store, profile.id, party))}
-            onDelete={(partyId) => setStore(removeParty(store, profile.id, partyId))}
+            onDelete={(partyId) => {
+              const party = profile.parties.find((q) => q.id === partyId);
+              undoable(`Deleted “${party?.name ?? 'party'}”`, removeParty(store, profile.id, partyId));
+            }}
           />
           <RosterEditor
             roster={profile.roster}
-            onChange={(roster) => setStore(updateRoster(store, profile.id, roster))}
+            onChange={(roster, removed) => {
+              const next = updateRoster(store, profile.id, roster);
+              if (removed) undoable(`Removed ${speciesName(removed.speciesId)}`, next);
+              else setStore(next);
+            }}
           />
         </>
       )}
@@ -124,6 +154,21 @@ export default function App() {
 
       {tab === 'upgrades' && (
         <Upgrades roster={profile.roster} selectedBoss={boss} conditions={conditions} />
+      )}
+
+      {undo && (
+        <div className="undo-bar" role="status">
+          <span className="grow">{undo.label}</span>
+          <button
+            onClick={() => {
+              setStore(undo.store);
+              setUndo(null);
+            }}
+          >
+            Undo
+          </button>
+          <button className="ghost" onClick={() => setUndo(null)} aria-label="Dismiss">×</button>
+        </div>
       )}
 
       <nav className="tabs">

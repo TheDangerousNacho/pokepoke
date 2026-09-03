@@ -9,7 +9,8 @@ import { SpeciesPicker } from './SpeciesPicker';
 
 interface Props {
   roster: StoredPokemon[];
-  onChange: (roster: StoredPokemon[]) => void;
+  /** `removed` is set when the change deleted a Pokémon, so it can be undone. */
+  onChange: (roster: StoredPokemon[], removed?: StoredPokemon) => void;
 }
 
 const LEVELS = Array.from({ length: 99 }, (_, i) => 1 + i * 0.5);
@@ -152,7 +153,7 @@ export function RosterEditor({ roster, onChange }: Props) {
           key={entry.id}
           entry={entry}
           onChange={(next) => onChange(roster.map((e, j) => (j === i ? next : e)))}
-          onRemove={() => onChange(roster.filter((_, j) => j !== i))}
+          onRemove={() => onChange(roster.filter((_, j) => j !== i), entry)}
         />
       ))}
     </>
