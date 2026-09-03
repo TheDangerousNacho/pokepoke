@@ -20,22 +20,32 @@ interface Draft {
   previewUrl: string;
   speciesId: string | null;
   cp: number | null;
+  hp: number | null;
+  /** Name-match candidates, then stats-based ones for renamed Pokémon. */
   alternatives: string[];
   nameText: string | null;
-  rawText: string;
+  types: string[];
+  /** True when the shortlist came from CP/HP because no name matched. */
+  fromStats: boolean;
+  debug: { pass: string; text: string }[];
   include: boolean;
 }
 
 function toDraft(r: ScanResult, id: number): Draft {
+  const named = r.matches.slice(0, 5).map((m) => m.species.id);
+  const fromStats = named.length === 0 && r.statsCandidates.length > 0;
   return {
     id,
     file: r.file,
     previewUrl: r.previewUrl,
     speciesId: r.speciesId,
     cp: r.cp,
-    alternatives: r.matches.slice(0, 5).map((m) => m.species.id),
+    hp: r.hp,
+    alternatives: fromStats ? r.statsCandidates.map((c) => c.speciesId) : named,
     nameText: r.nameText,
-    rawText: r.rawText,
+    types: r.types,
+    fromStats,
+    debug: r.debug,
     include: r.speciesId !== null && r.cp !== null,
   };
 }
@@ -207,6 +217,7 @@ export function ScanTab({ onImport }: Props) {
               </div>
 
               <Warnings draft={d} />
+              <Diagnostics draft={d} />
 
               {pickingFor === d.id && (
                 <SpeciesPicker
@@ -222,6 +233,38 @@ export function ScanTab({ onImport }: Props) {
         </>
       )}
     </>
+  );
+}
+
+/**
+ * Raw OCR output, collapsed. Without this a bad scan is unfixable guesswork —
+ * seeing what was actually read tells you whether the image, the crop or the
+ * matching is at fault.
+ */
+function Diagnostics({ draft }: { draft: Draft }) {
+  return (
+    <details style={{ marginTop: 8 }}>
+      <summary className="small muted" style={{ cursor: 'pointer' }}>
+        What the scanner read
+      </summary>
+      {draft.types.length > 0 && (
+        <p className="small muted" style={{ margin: '6px 0 0' }}>
+          Types detected: {draft.types.join(', ')}
+        </p>
+      )}
+      {draft.hp !== null && (
+        <p className="small muted" style={{ margin: '6px 0 0' }}>HP {draft.hp}</p>
+      )}
+      {draft.debug.map((d) => (
+        <div key={d.pass} style={{ marginTop: 6 }}>
+          <div className="small muted">{d.pass}</div>
+          <pre className="small mono" style={{
+            margin: 0, padding: 6, background: 'var(--surface-2)', borderRadius: 6,
+            whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: 140, overflow: 'auto',
+          }}>{d.text || '(nothing)'}</pre>
+        </div>
+      ))}
+    </details>
   );
 }
 
@@ -246,11 +289,20 @@ function Warnings({ draft }: { draft: Draft }) {
   }
   if (draft.cp === null) notes.push('No CP found — type it in.');
   if (!draft.speciesId) {
-    notes.push(
-      draft.nameText
-        ? `Couldn't match “${draft.nameText}” to a species — pick one above.`
-        : "Couldn't find a name on this image — pick the species above.",
-    );
+    if (draft.fromStats) {
+      notes.push(
+        `No species name on screen — probably renamed. Narrowed to ` +
+        `${draft.alternatives.length} candidate${draft.alternatives.length === 1 ? '' : 's'} ` +
+        `from CP${draft.hp !== null ? ' and HP' : ''}` +
+        `${draft.types.length ? ` (${draft.types.join('/')})` : ''} — pick yours above.`,
+      );
+    } else {
+      notes.push(
+        draft.nameText
+          ? `Couldn't match “${draft.nameText}” to a species — pick one above.`
+          : "Couldn't find a name on this image — pick the species above.",
+      );
+    }
   }
 
   if (notes.length === 0) return null;

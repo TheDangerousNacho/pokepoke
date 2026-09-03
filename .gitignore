@@ -25,3 +25,7 @@ dist-ssr
 
 # 19MB upstream dump; `npm run build:gm` re-downloads it at the pinned commit.
 data/vendor/
+
+# Real screenshots for OCR tuning — kept local.
+test-screenshots/*
+!test-screenshots/README.md
