@@ -7,7 +7,7 @@ import { rankAttackers } from '../engine/simulate';
 import type { RosterEntry } from '../engine/stats';
 import { partyMembers, type TrainerProfile } from '../storage/profiles';
 import type { BossListEntry } from './BossPicker';
-import { formatSeconds, moveName, speciesName } from './format';
+import { bossName, formatSeconds, moveName, speciesName } from './format';
 
 interface Props {
   boss: BossListEntry | null;
@@ -158,7 +158,7 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
       ) : (
         <>
           <h2>
-            Can we beat {speciesName(boss.speciesId)}?
+            Can we beat {bossName(boss)}?
             {pending && <span className="small muted"> · updating…</span>}
           </h2>
 

@@ -16,7 +16,7 @@ import { Results } from './ui/Results';
 import { RosterEditor } from './ui/RosterEditor';
 import { ScanTab } from './ui/ScanTab';
 import { Upgrades } from './ui/Upgrades';
-import { speciesName } from './ui/format';
+import { bossName, speciesName } from './ui/format';
 
 type Tab = 'boss' | 'roster' | 'scan' | 'results' | 'upgrades';
 
@@ -77,7 +77,7 @@ export default function App() {
     <div className="app">
       <h1>Raid Planner</h1>
       <p className="small muted" style={{ marginTop: 0 }}>
-        {boss ? `${speciesName(boss.speciesId)} · ` : 'No boss selected · '}
+        {boss ? `${bossName(boss)} · ` : 'No boss selected · '}
         {profile.name} · {profile.roster.length} Pokémon
       </p>
 

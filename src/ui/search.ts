@@ -11,8 +11,14 @@ export interface SpeciesOption {
 /**
  * Every attackable species, sorted by dex. Built once — the picker filters
  * this list rather than rebuilding it per keystroke.
+ *
+ * "Attackable" excludes the handful of forms the Game Master gives no moves
+ * at all (Smeargle, whose moves come from Sketch). They cannot be simulated
+ * as an attacker or as a boss, so offering them would only produce a crash
+ * further down.
  */
 export const ALL_SPECIES: SpeciesOption[] = Object.values(gm.species)
+  .filter((s) => s.fastMoves.length > 0 && s.chargedMoves.length > 0)
   .map((s) => ({ id: s.id, name: speciesName(s.id), dex: s.dex, types: s.types }))
   .sort((a, b) => a.dex - b.dex || a.name.localeCompare(b.name));
 

@@ -54,6 +54,9 @@ export function identifyFromStats(
   const out: StatsMatch[] = [];
 
   for (const species of Object.values(gm.species)) {
+    // Moveless forms cannot be simulated, so proposing one as a scan result
+    // would hand the roster an entry that breaks the moment it is used.
+    if (species.fastMoves.length === 0 || species.chargedMoves.length === 0) continue;
     if (types?.length && !types.every((t) => species.types.includes(t))) continue;
     if (familyId && species.familyId !== familyId) continue;
 

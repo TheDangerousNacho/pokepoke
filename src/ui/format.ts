@@ -29,6 +29,14 @@ export function megaName(id: string): string {
   return label === 'MEGA' ? 'Mega' : `Mega ${label.replace('MEGA ', '')}`;
 }
 
+/**
+ * How a raid boss should be named on screen: a mega boss is a different fight
+ * from its base form, so the header has to say which one you are planning for.
+ */
+export function bossName(boss: { speciesId: string; megaId?: string }): string {
+  return boss.megaId ? `${megaName(boss.megaId)} ${speciesName(boss.speciesId)}` : speciesName(boss.speciesId);
+}
+
 export function formatSeconds(ms: number): string {
   const total = Math.round(ms / 1000);
   const m = Math.floor(total / 60);

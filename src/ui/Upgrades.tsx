@@ -4,7 +4,7 @@ import type { BattleConditions } from '../engine/damage';
 import type { RaidBossSpec, RosterEntry } from '../engine/stats';
 import { rankUpgrades, type MoveUpgrade } from '../engine/upgrades';
 import { BOSSES, type BossListEntry } from './BossPicker';
-import { moveName, speciesName } from './format';
+import { bossName, moveName, speciesName } from './format';
 
 interface Props {
   roster: RosterEntry[];
@@ -47,7 +47,7 @@ export function Upgrades({ roster, selectedBoss, conditions }: Props) {
               Current hard raids ({bosses.length > 0 ? bosses.map((b) => speciesName(b.speciesId)).join(', ') : 'none'})
             </option>
             <option value="selected" disabled={!selectedBoss}>
-              {selectedBoss ? `Just ${speciesName(selectedBoss.speciesId)}` : 'Pick a boss first'}
+              {selectedBoss ? `Just ${bossName(selectedBoss)}` : 'Pick a boss first'}
             </option>
           </select>
         </div>

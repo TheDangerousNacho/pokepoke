@@ -2,11 +2,14 @@ import bossData from '../data/bosses.json';
 import { getSpecies } from '../engine/gamemaster';
 import { getTier, type RaidTier } from '../engine/raidTiers';
 import type { RaidBossSpec } from '../engine/stats';
-import { moveName, speciesName } from './format';
+import { CustomBoss } from './CustomBoss';
+import { bossName, moveName, speciesName } from './format';
 import { TypeChip } from './TypeChip';
 
 export interface BossListEntry extends RaidBossSpec {
   shiny?: boolean;
+  /** Built by hand rather than taken from the rotation feed. */
+  custom?: boolean;
 }
 
 export const BOSSES = (bossData.bosses as Array<{
@@ -71,6 +74,8 @@ export function BossPicker({ selected, onSelect, onChangeMoves }: Props) {
         </section>
       ))}
 
+      <CustomBoss selected={selected} onSelect={onSelect} />
+
       {selected && <BossMoveset boss={selected} onChange={onChangeMoves} />}
     </>
   );
@@ -87,7 +92,7 @@ function BossMoveset({ boss, onChange }: { boss: BossListEntry; onChange: (b: Bo
 
   return (
     <div className="card">
-      <h3>{speciesName(boss.speciesId)}'s moveset</h3>
+      <h3>{bossName(boss)}'s moveset</h3>
       <p className="small muted" style={{ marginTop: 0 }}>
         Not published with the rotation. This only changes how quickly your team
         faints, not how much damage you need.

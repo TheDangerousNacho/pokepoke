@@ -87,6 +87,9 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .field { display: flex; flex-direction: column; gap: 4px; }
 .field > label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* A grid track is auto-sized to its content by default, so a select holding a
+   long option ("Mega Legendary · 22,500 HP") overflows the card on a phone. */
+.grid-2 > *, .field > select, .field > input { min-width: 0; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
 .tabs {
