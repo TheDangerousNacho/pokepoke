@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 19MB upstream dump; `npm run build:gm` re-downloads it at the pinned commit.
+data/vendor/
