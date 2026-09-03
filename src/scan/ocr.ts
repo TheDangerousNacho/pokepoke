@@ -42,9 +42,27 @@ export interface ScanResult extends ScanCandidate {
 
 type Worker = Awaited<ReturnType<typeof create>>;
 
+/**
+ * The Tesseract runtime is served from our own origin, staged into
+ * public/tesseract/ by `npm run prepare:ocr`.
+ *
+ * The library's default is to build its worker from a blob URL and have that
+ * worker importScripts() a CDN. That is a cross-origin load from an opaque
+ * origin and it fails outright in some browsers — it failed on the deployed
+ * site, while working in local dev, which is exactly the kind of difference
+ * that only shows up once it is live. Same-origin assets also cache, so only
+ * the first scan pays the download.
+ */
 async function create() {
   const { createWorker } = await import('tesseract.js');
-  return createWorker('eng');
+  const base = import.meta.env.BASE_URL;
+  return createWorker('eng', undefined, {
+    workerPath: `${base}tesseract/worker.min.js`,
+    // Directories: the library appends the core variant and language file it
+    // decides it needs, which depends on the browser's SIMD support.
+    corePath: `${base}tesseract/`,
+    langPath: `${base}tesseract/`,
+  });
 }
 
 let workerPromise: Promise<Worker> | null = null;

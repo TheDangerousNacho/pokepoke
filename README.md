@@ -40,11 +40,20 @@ the known simplifications.
 
 ```bash
 npm install
-npm run dev        # local dev server
-npm test           # 178 tests
+npm run prepare:ocr  # stage the Tesseract runtime (~21MB, gitignored)
+npm run dev          # serves at http://localhost:5173/pokepoke/
+npm test             # 178 tests
 npm run typecheck
-npm run build      # static bundle in dist/
+npm run build        # static bundle in dist/
 ```
+
+The dev server lives under `/pokepoke/` because that is the path GitHub Pages
+serves from, and it is better for dev to match. Override with `BASE_PATH=/`.
+
+`prepare:ocr` copies the Tesseract worker, WASM core and English model into
+`public/tesseract/` so the app serves them from its own origin rather than a
+CDN — the CDN default builds a blob worker that cross-origin `importScripts`,
+which is blocked in some browsers. Not committed; CI stages it before building.
 
 Data refresh, needed occasionally rather than routinely:
 

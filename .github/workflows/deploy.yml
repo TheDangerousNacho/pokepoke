@@ -35,6 +35,10 @@ jobs:
       - run: npm run typecheck
       - run: npm test
 
+      # Stages the Tesseract runtime into public/ so the deployed site serves
+      # it from its own origin instead of a CDN. Not committed: ~21MB.
+      - run: npm run prepare:ocr
+
       - run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
