@@ -30,6 +30,16 @@ function bestParty(roster: RosterEntry[], boss: BossListEntry, conditions: Battl
 /** Sentinel for "let the app pick", as opposed to a saved party's id. */
 const AUTO = 'auto';
 
+/**
+ * Group sizes shown when only one trainer is selected. Four because that is
+ * how many people are in this household; bigger lobbies are a different
+ * question ("will strangers show up?") that this app cannot answer.
+ */
+const GROUP_SIZES = [1, 2, 3, 4];
+
+const GROUP_LABELS: Record<number, string> = { 1: 'Solo', 2: 'Duo', 3: 'Trio', 4: 'Four' };
+const groupLabel = (n: number) => GROUP_LABELS[n] ?? `${n} trainers`;
+
 export function Results({ boss, profiles, activeProfileId, conditions }: Props) {
   const withRosters = profiles.filter((p) => p.roster.length > 0);
   const [selected, setSelected] = useState<string[]>([activeProfileId]);
@@ -58,7 +68,7 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
     // lobby, and copying anyone would be inventing Pokémon they do not own.
     const groupEstimates =
       parties.length === 1
-        ? [1, 2, 3].map((n) => ({
+        ? GROUP_SIZES.map((n) => ({
             n,
             lobby: simulateLobby(identicalLobby(parties[0].party, n, parties[0].name), boss, { conditions }),
           }))
@@ -66,20 +76,23 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
 
     const lobby = simulateLobby(parties, boss, { conditions });
 
-    // For a single trainer the page talks about solo/duo/trio, so plan for the
-    // trio — planning for a lone trainer would answer a question the verdict
-    // above is not asking.
+    // For a single trainer the page offers several group sizes, so plan for
+    // the biggest one: if even that loses, every smaller group loses too, and
+    // advice aimed at a lone trainer would answer a question the verdict above
+    // is not asking.
+    const planGroup = GROUP_SIZES[GROUP_SIZES.length - 1];
     const planFor = groupEstimates
-      ? identicalLobby(parties[0].party, 3, parties[0].name)
+      ? identicalLobby(parties[0].party, planGroup, parties[0].name)
       : parties;
-    const worstCase = groupEstimates ? groupEstimates[2].lobby : lobby;
+    const bestCase = groupEstimates ? groupEstimates[groupEstimates.length - 1].lobby : lobby;
 
     return {
       parties,
       groupEstimates,
       lobby,
       // Only worth the ~70ms when there is actually something to fix.
-      plan: worstCase.won ? null : planPowerUps(planFor, boss, { conditions }),
+      plan: bestCase.won ? null : planPowerUps(planFor, boss, { conditions }),
+      planGroup: groupEstimates ? planGroup : parties.length,
       ranked: rankAttackers(inLobby.flatMap((p) => p.roster), boss, { conditions }),
     };
   }, [boss, inLobby.map((p) => p.id).join(','), chosenParty, profiles, conditions]);
@@ -155,7 +168,7 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
                 {result.groupEstimates.map(({ n, lobby }) => (
                   <Verdict
                     key={n}
-                    label={n === 1 ? 'Solo' : n === 2 ? 'Duo' : 'Trio'}
+                    label={groupLabel(n)}
                     won={lobby.won}
                     timeToWinMs={lobby.timeToWinMs}
                     fraction={lobby.bossHpFraction}
@@ -201,7 +214,10 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
           )}
 
           {result.plan && (
-            <PowerUpAdvice plan={result.plan} trio={Boolean(result.groupEstimates)} />
+            <PowerUpAdvice
+              plan={result.plan}
+              who={result.groupEstimates ? `a group of ${result.planGroup}` : 'this lobby'}
+            />
           )}
 
           {result.lobby.megaBoostTypes.length > 0 && (
@@ -271,8 +287,7 @@ function Verdict({ label, won, timeToWinMs, fraction }: {
  * Shown only when the raid is currently lost, because it is the answer to the
  * question the verdict just raised.
  */
-function PowerUpAdvice({ plan, trio }: { plan: PowerUpPlan; trio: boolean }) {
-  const who = trio ? 'a trio' : 'this lobby';
+function PowerUpAdvice({ plan, who }: { plan: PowerUpPlan; who: string }) {
   const num = (n: number) => n.toLocaleString();
 
   if (!plan.achievable) {
