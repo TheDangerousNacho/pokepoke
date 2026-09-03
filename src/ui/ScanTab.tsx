@@ -28,6 +28,9 @@ interface Draft {
   types: string[];
   /** Family read off the candy label, e.g. FAMILY_EEVEE. */
   familyId: string | null;
+  /** Power-up cost read off the button, and the levels it allows. */
+  upgradeCost: { stardust: number; candy: number } | null;
+  levelBand: { min: number; max: number } | null;
   /** True when the shortlist came from CP/HP because no name matched. */
   fromStats: boolean;
   debug: { pass: string; text: string }[];
@@ -48,6 +51,8 @@ function toDraft(r: ScanResult, id: number): Draft {
     nameText: r.nameText,
     types: r.types,
     familyId: r.familyId,
+    upgradeCost: r.upgradeCost,
+    levelBand: r.levelBand,
     fromStats,
     debug: r.debug,
     include: r.speciesId !== null && r.cp !== null,
@@ -58,14 +63,16 @@ function draftToEntry(d: Draft): RosterEntry | null {
   if (!d.speciesId || d.cp === null) return null;
   // Prefer the reconciled level: HP is read far more reliably than CP, so it
   // corrects a mangled CP rather than inheriting its error.
-  const level = reconcile(d.speciesId, d.cp, d.hp).level ?? 1;
+  const level = reconcile(d.speciesId, d.cp, d.hp, d.levelBand as never).level ?? 1;
   const best = bestMoveset(d.speciesId);
   const species = getSpecies(d.speciesId);
   return {
     speciesId: d.speciesId,
     level,
-    // A scan cannot see IVs. Assumed, and the review screen says so.
-    ivs: { attack: 15, defense: 15, stamina: 15 },
+    // A scan cannot see IVs. 12/12/12 is nearer a typical caught Pokémon than
+    // assuming a hundo, and the full IV range is only worth ~7% DPS anyway.
+    // The review screen says the values are assumed.
+    ivs: { attack: 12, defense: 12, stamina: 12 },
     fastMove: best?.fastMove ?? species.fastMoves[0],
     chargedMove: best?.chargedMove ?? species.chargedMoves[0],
   };
@@ -253,6 +260,13 @@ function Diagnostics({ draft }: { draft: Draft }) {
       <summary className="small muted" style={{ cursor: 'pointer' }}>
         What the scanner read
       </summary>
+      {draft.upgradeCost && (
+        <p className="small muted" style={{ margin: '6px 0 0' }}>
+          Power-up cost: {draft.upgradeCost.stardust.toLocaleString()} dust /{' '}
+          {draft.upgradeCost.candy} candy
+          {draft.levelBand ? ` → level ${draft.levelBand.min}-${draft.levelBand.max}` : ''}
+        </p>
+      )}
       {draft.familyId && (
         <p className="small muted" style={{ margin: '6px 0 0' }}>
           Candy family: {draft.familyId.replace('FAMILY_', '')}
@@ -293,7 +307,7 @@ function Warnings({ draft }: { draft: Draft }) {
     notes.push(`CP ${draft.cp} is impossible for ${speciesName(draft.speciesId)} — likely a misread.`);
   }
   if (draft.speciesId && (draft.cp !== null || draft.hp !== null)) {
-    const r = reconcile(draft.speciesId, draft.cp, draft.hp);
+    const r = reconcile(draft.speciesId, draft.cp, draft.hp, draft.levelBand as never);
     if (!r.consistent && r.expectedCp) {
       notes.push(
         `CP ${draft.cp} doesn't fit HP ${draft.hp} — expected roughly ` +

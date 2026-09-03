@@ -68,6 +68,18 @@ export type WeatherCondition =
   | 'CLEAR' | 'RAINY' | 'PARTLY_CLOUDY' | 'OVERCAST'
   | 'WINDY' | 'SNOW' | 'FOG';
 
+/** Stardust and candy costs to power up, indexed by whole level minus one. */
+export interface UpgradeCosts {
+  stardust: number[];
+  candy: number[];
+  xlCandy: number[];
+  xlCandyMinPokemonLevel: number;
+  shadowStardustMultiplier: number;
+  shadowCandyMultiplier: number;
+  purifiedStardustMultiplier: number;
+  purifiedCandyMultiplier: number;
+}
+
 export interface GameMaster {
   source: { repo: string; commit: string; path: string; committed: string; generatedAt: string };
   types: PokemonType[];
@@ -78,6 +90,7 @@ export interface GameMaster {
   settings: BattleSettings;
   /** Index = friendship level; 0 = not friends. */
   friendshipAttackMultipliers: number[];
+  upgradeCosts: UpgradeCosts;
   /** Weather condition -> the move types it boosts. */
   weatherAffinities: Record<WeatherCondition, PokemonType[]>;
   moves: Record<string, Move>;

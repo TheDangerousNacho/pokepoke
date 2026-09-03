@@ -1,5 +1,6 @@
 import { combatPower, cpm } from '../engine/cpm';
 import { getSpecies } from '../engine/gamemaster';
+import { intersectLevels, type LevelBand } from './powerUp';
 
 export interface Reconciliation {
   /** Best level estimate, or null when nothing could be derived. */
@@ -46,6 +47,12 @@ export function reconcile(
   speciesId: string,
   cp: number | null,
   hp: number | null,
+  /**
+   * Levels allowed by the power-up cost. This is the strongest level signal
+   * available — a discrete table lookup rather than an inference through
+   * unknown IVs — so it is applied last, narrowing whatever CP and HP left open.
+   */
+  levelBand: LevelBand | null = null,
 ): Reconciliation {
   const species = getSpecies(speciesId);
 
@@ -80,11 +87,11 @@ export function reconcile(
   if (cp === null) {
     // HP alone pins a range of levels; take the middle as the estimate.
     return {
-      level: pickLevel(hpLevels),
+      level: pickLevel(intersectLevels(levelBand, hpLevels)),
       source: 'hp',
       consistent: true,
       expectedCp,
-      approximate: true,
+      approximate: intersectLevels(levelBand, hpLevels).length > 1,
     };
   }
 
@@ -125,11 +132,12 @@ export function reconcile(
     };
   }
 
+  const narrowed = intersectLevels(levelBand, exact);
   return {
-    level: pickLevel(exact),
+    level: pickLevel(narrowed),
     source: 'cp+hp',
     consistent: true,
     expectedCp,
-    approximate: exact.length > 1,
+    approximate: narrowed.length > 1,
   };
 }

@@ -1,6 +1,7 @@
 import { combatPower, cpm } from '../engine/cpm';
 import { gm } from '../engine/gamemaster';
 import { matchSpeciesName } from './match';
+import type { LevelBand } from './powerUp';
 import type { PokemonType } from '../engine/types';
 
 export interface StatsMatch {
@@ -39,10 +40,12 @@ const IV_VALUES = Array.from({ length: 16 }, (_, i) => i);
 export function identifyFromStats(
   cp: number,
   hp: number,
-  { types, familyId, limit = 60 }: {
+  { types, familyId, levelBand, limit = 60 }: {
     types?: PokemonType[];
     /** Evolutionary family from the candy label — the strongest filter available. */
     familyId?: string | null;
+    /** Levels allowed by the power-up cost, if it was readable. */
+    levelBand?: LevelBand | null;
     limit?: number;
   } = {},
 ): StatsMatch[] {
@@ -57,6 +60,7 @@ export function identifyFromStats(
     const levels: number[] = [];
 
     for (let level = 1; level <= MAX_LEVEL; level += 0.5) {
+      if (levelBand && !levelBand.levels.includes(level)) continue;
       const multiplier = cpm(level);
 
       // HP depends only on stamina, so it pins the stamina IVs outright.
@@ -65,7 +69,8 @@ export function identifyFromStats(
       );
       if (staminaIvs.length === 0) {
         // Even a 0 IV already overshoots: no higher level can work either.
-        if (Math.floor((species.baseStamina + 0) * multiplier) > hp) break;
+        // Only safe to stop early when scanning the full range.
+        if (!levelBand && Math.floor((species.baseStamina + 0) * multiplier) > hp) break;
         continue;
       }
 

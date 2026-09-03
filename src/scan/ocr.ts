@@ -2,6 +2,7 @@ import { parseCp, parseScreenshotText, type ScanCandidate } from './parse';
 import { identifyFromStats, parseCandyFamily, parseTypes, type StatsMatch } from './identify';
 import { prepareImage } from './image';
 import { reconcile, type Reconciliation } from './reconcile';
+import { levelsFromUpgradeCost, parseUpgradeCost, type LevelBand, type UpgradeCostReading } from './powerUp';
 
 /**
  * Screenshot OCR.
@@ -28,6 +29,9 @@ export interface ScanResult extends ScanCandidate {
   types: string[];
   /** Family from the candy label, e.g. FAMILY_EEVEE. */
   familyId: string | null;
+  /** Power-up cost read off the button, and the levels it implies. */
+  upgradeCost: UpgradeCostReading | null;
+  levelBand: LevelBand | null;
   /** Species consistent with the CP/HP pair — for renamed Pokémon with no name. */
   statsCandidates: StatsMatch[];
   /** CP/HP cross-check, when the species is known. */
@@ -111,21 +115,35 @@ export async function scanScreenshots(
     const bandCp = await readCp(worker, prepared.cpBand, debug);
     const cp = bandCp ?? parsed.cp;
 
+    onProgress?.({ file: file.name, progress: 0.75, status: 'reading power-up cost' });
+    const { data: detail } = await worker.recognize(prepared.detailBand);
+    debug.push({ pass: 'detail-band', text: detail.text.trim() });
+
+    // Both passes see the lower half; combine them so whichever read the candy
+    // label or the cost row better wins.
+    const lowerText = `${data.text}\n${detail.text}`;
+
     onProgress?.({ file: file.name, progress: 0.9, status: 'matching' });
-    const types = parseTypes(data.text);
-    const familyId = parseCandyFamily(data.text);
+    const types = parseTypes(lowerText);
+    const familyId = parseCandyFamily(lowerText);
+    const upgradeCost = parseUpgradeCost(lowerText);
+    const levelBand = upgradeCost ? levelsFromUpgradeCost(upgradeCost) : null;
     // Only worth computing when the name failed — that is the renamed case.
     const statsCandidates =
       parsed.speciesId === null && cp !== null && parsed.hp !== null
-        ? identifyFromStats(cp, parsed.hp, { types: types as never[], familyId })
+        ? identifyFromStats(cp, parsed.hp, { types: types as never[], familyId, levelBand })
         : [];
 
     results.push({
       ...parsed,
-      reconciliation: parsed.speciesId ? reconcile(parsed.speciesId, cp, parsed.hp) : null,
+      reconciliation: parsed.speciesId
+        ? reconcile(parsed.speciesId, cp, parsed.hp, levelBand)
+        : null,
       cp,
       types,
       familyId,
+      upgradeCost,
+      levelBand,
       statsCandidates,
       file: file.name,
       previewUrl: URL.createObjectURL(file),

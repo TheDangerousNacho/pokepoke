@@ -179,6 +179,31 @@ function buildSpecies(templates, resolveMove) {
   return species;
 }
 
+/**
+ * Power-up costs by level. Not obvious from the raw arrays: `upgradesPerLevel`
+ * is 2, and the arrays are indexed by WHOLE level minus one, with both
+ * half-steps inside a level costing the same. So index 29 is level 30 (and
+ * 30.5), which checks out against the known 5,000 dust / 4 candy for level 30.
+ *
+ * This is the only on-screen signal that pins a Pokémon's level directly.
+ */
+function buildUpgradeCosts(idx) {
+  const u = idx.POKEMON_UPGRADE_SETTINGS.pokemonUpgrades;
+  if (u.upgradesPerLevel !== 2) {
+    throw new Error(`upgradesPerLevel is ${u.upgradesPerLevel}; the level mapping assumes 2`);
+  }
+  return {
+    stardust: u.stardustCost,
+    candy: u.candyCost,
+    xlCandy: u.xlCandyCost,
+    xlCandyMinPokemonLevel: u.xlCandyMinPokemonLevel,
+    shadowStardustMultiplier: u.shadowStardustMultiplier,
+    shadowCandyMultiplier: u.shadowCandyMultiplier,
+    purifiedStardustMultiplier: u.purifiedStardustMultiplier,
+    purifiedCandyMultiplier: u.purifiedCandyMultiplier,
+  };
+}
+
 function buildSettings(idx) {
   const b = idx.BATTLE_SETTINGS.battleSettings;
   const w = idx.WEATHER_BONUS_SETTINGS.weatherBonusSettings;
@@ -275,12 +300,13 @@ function pack(bundle) {
   ]);
 
   return {
-    format: 3,
+    format: 4,
     source: bundle.source,
     types: bundle.types,
     typeChart: bundle.types.map((name) => bundle.typeChart[name]),
     cpMultipliers: bundle.cpMultipliers,
     settings: bundle.settings,
+    upgradeCosts: bundle.upgradeCosts,
     friendshipAttackMultipliers: bundle.friendshipAttackMultipliers,
     weatherAffinities: Object.fromEntries(
       Object.entries(bundle.weatherAffinities).map(([k, v]) => [k, v.map(t)]),
@@ -313,6 +339,7 @@ async function main() {
     settings: buildSettings(idx),
     friendshipAttackMultipliers: buildFriendship(templates),
     weatherAffinities: buildWeatherAffinities(templates),
+    upgradeCosts: buildUpgradeCosts(idx),
     moves,
     species: buildSpecies(templates, resolveMove),
   };

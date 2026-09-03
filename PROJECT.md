@@ -216,6 +216,37 @@ What the real captures taught, none of which was guessable:
   as a witness against a bad CP: if no integer IV spread reproduces both for
   that species, the CP is rejected and the level comes from HP instead.
 
+### Level, and why IVs are not the priority
+
+Measured with the engine: the entire IV range, hundo to 0/0/0, is worth **6.7%
+DPS** (Metagross L35 vs Regice; attack IV alone is 3.8%). A five-level error is
+worth about the same. Both are smaller than the ~11% optimism this engine
+already carries against Pokebattler.
+
+So level, not IVs, is where precision pays — and the level is knowable exactly.
+`POKEMON_UPGRADE_SETTINGS` in the Game Master holds the stardust and candy cost
+per level, and the detail screen shows the cost on the POWER UP button. Reading
+it narrows the level to one whole level (two half-steps), which CP and HP alone
+cannot do.
+
+Verified on the sample screenshots: 6,000/6 dust-candy pins Gyarados to levels
+31-32.5 and made its level estimate exact rather than approximate; 5,000/4 pins
+the renamed Sylveon to level 30 outright, from five candidates.
+
+Two caveats found in the real captures:
+- The stardust and candy icons sit next to their figures and OCR folds them in,
+  so "5,000" arrives as "15000" and a candy count of 6 as "26". Each number is
+  therefore also tried with its leading digit dropped; safe only because the
+  pair must jointly agree on one level.
+- **The appraisal screen hides the POWER UP button**, so it yields no level and
+  no candy label. Prefer the plain detail screen: it carries the moves, the
+  candy family, and the power-up cost. The appraisal's star rating only buckets
+  the IV *total* and cannot say which stat is good, which is the one that
+  matters for raids.
+
+Scanned Pokémon default to **12/12/12** IVs rather than a hundo — nearer a
+typical catch, and the review screen says they are assumed.
+
 Level is chosen as the LOWEST that fits, not the median. Reaching a higher
 level at the same CP requires worse IVs, so the low end is both likelier and
 the safer error — it understates damage rather than promising a win the team

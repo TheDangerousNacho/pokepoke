@@ -13,6 +13,13 @@ export interface Prepared {
   full: string;
   /** Renderings of the CP band at the top, in the order worth trying. */
   cpBand: string[];
+  /**
+   * The lower half at higher resolution. The power-up cost and the candy
+   * labels live here in small text that the full-page pass reads poorly, and
+   * their vertical position shifts between layouts (a Dynamax row pushes
+   * everything down), so this is a generous band rather than a tight crop.
+   */
+  detailBand: string;
   width: number;
   height: number;
 }
@@ -34,6 +41,9 @@ const CP_BAND_TOP = 0.03;
 const CP_BAND_HEIGHT = 0.11;
 const CP_BAND_LEFT = 0.22;
 const CP_BAND_WIDTH = 0.56;
+
+const DETAIL_BAND_TOP = 0.42;
+const DETAIL_BAND_HEIGHT = 0.48;
 
 function toCanvas(bitmap: ImageBitmap, scale: number): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
@@ -144,8 +154,15 @@ export async function prepareImage(file: File): Promise<Prepared> {
       3,
     );
 
+    const detail = crop(
+      full,
+      { left: 0, top: DETAIL_BAND_TOP, width: 1, height: DETAIL_BAND_HEIGHT },
+      1.8,
+    );
+
     return {
       full: full.toDataURL('image/png'),
+      detailBand: detail.toDataURL('image/png'),
       // Percentile cutoffs first: they adapt to the image, which fixed values
       // cannot do for white CP text over a bright sky. Fixed cutoffs stay as
       // backstops, cheap to try and occasionally better on flat backgrounds.

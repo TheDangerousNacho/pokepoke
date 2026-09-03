@@ -27,6 +27,7 @@ interface PackedBundle {
   typeChart: number[][];
   cpMultipliers: number[];
   settings: GameMaster['settings'];
+  upgradeCosts: GameMaster['upgradeCosts'];
   friendshipAttackMultipliers: number[];
   weatherAffinities: Record<string, number[]>;
   moveIds: string[];
@@ -36,7 +37,7 @@ interface PackedBundle {
 }
 
 function unpack(p: PackedBundle): GameMaster {
-  if (p.format !== 3) {
+  if (p.format !== 4) {
     throw new Error(`gamemaster.json is format ${p.format}; run \`npm run build:gm\``);
   }
   const type = (i: number) => p.types[i];
@@ -96,6 +97,7 @@ function unpack(p: PackedBundle): GameMaster {
     typeChart,
     cpMultipliers: p.cpMultipliers,
     settings: p.settings,
+    upgradeCosts: p.upgradeCosts,
     friendshipAttackMultipliers: p.friendshipAttackMultipliers,
     weatherAffinities,
     moves,
