@@ -5,7 +5,7 @@ compatibility_date = "2026-09-01"
 # Household roster storage. One KV entry per trainer profile.
 [[kv_namespaces]]
 binding = "ROSTERS"
-id = "REPLACE_WITH_YOUR_KV_ID"
+id = "1c955c0723cb4953bbfac3dff3b2eeb5"
 preview_id = "local-preview"
 
 [vars]
