@@ -252,9 +252,35 @@ level at the same CP requires worse IVs, so the low end is both likelier and
 the safer error — it understates damage rather than promising a win the team
 cannot deliver.
 
-### Phase 3 — Move recommendations, ~3–5 days
+### Phase 3 — Move recommendations — BUILT
 
-Reuse the Phase 1 engine over every fast+charged combo a species can learn. Requires
-a hand-maintained "currently teachable" list so legacy moves are never recommended.
-Rank by **DPS/TDO improvement per Elite TM spent** — Elite TMs are the scarce
-resource, so that ratio is the number that drives the decision, not raw gap.
+`src/engine/upgrades.ts` runs the Phase 1 simulation over every fast+charged
+combination a species can legally learn, against the bosses actually in
+rotation, and reports what a TM would buy. Surfaced as the **TMs** tab.
+
+**The hand-maintained "currently teachable" list turned out to be unnecessary.**
+The Game Master flags Elite-TM-only moves per species (`eliteQuickMove` /
+`eliteCinematicMove`), and anything retired outright is simply absent from both
+lists. So a move that cannot be obtained can never be recommended, without any
+community data to maintain.
+
+Four things the naive version got wrong, all fixed:
+
+- **Ordinary TMs are not one TM.** They reroll at random within the current
+  pool, so reaching a specific move takes `k-1` attempts in expectation (`k` if
+  the Pokémon currently knows a legacy move, which sits outside the pool).
+  Reported as "~4 ordinary TMs", explicitly an expectation rather than a price.
+- **Keeping a legacy move you already have is free.** An early version priced
+  "Karate Chop / Dynamic Punch" on a Machamp that already knew Karate Chop as
+  costing an Elite TM. Elite cost is now the spend to get *from the current
+  moveset to this one*, not whether the moveset contains a legacy move.
+- **A marginal Elite TM recommendation is a bad recommendation.** Tyranitar's
+  best legacy moveset beat its best free one by well under a percent, and the
+  tool cheerfully advised burning an Elite TM on it. An Elite option must now
+  clear the best free option by `eliteWorthThreshold` (default 2%).
+- **Replacing a legacy move is irreversible** without another Elite TM, so that
+  is called out even when the swap is an improvement.
+
+Ranked by gain per Elite TM, with free upgrades listed first, and the best
+Elite-free alternative always shown alongside so the recommendation can be
+declined.

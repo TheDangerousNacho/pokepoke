@@ -9,9 +9,10 @@ import { ProfileBar } from './ui/ProfileBar';
 import { Results } from './ui/Results';
 import { RosterEditor } from './ui/RosterEditor';
 import { ScanTab } from './ui/ScanTab';
+import { Upgrades } from './ui/Upgrades';
 import { speciesName } from './ui/format';
 
-type Tab = 'boss' | 'roster' | 'scan' | 'results';
+type Tab = 'boss' | 'roster' | 'scan' | 'results' | 'upgrades';
 
 const WEATHER: Array<{ value: WeatherCondition | 'NONE'; label: string }> = [
   { value: 'NONE', label: 'No boost' },
@@ -105,8 +106,12 @@ export default function App() {
 
       {tab === 'results' && <Results boss={boss} roster={profile.roster} conditions={conditions} />}
 
+      {tab === 'upgrades' && (
+        <Upgrades roster={profile.roster} selectedBoss={boss} conditions={conditions} />
+      )}
+
       <nav className="tabs">
-        {([['boss', 'Boss'], ['roster', 'Roster'], ['scan', 'Scan'], ['results', 'Results']] as const).map(([id, label]) => (
+        {([['boss', 'Boss'], ['roster', 'Roster'], ['scan', 'Scan'], ['results', 'Results'], ['upgrades', 'TMs']] as const).map(([id, label]) => (
           <button key={id} aria-current={tab === id} onClick={() => setTab(id)}>
             {label}
           </button>
