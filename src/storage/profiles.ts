@@ -111,8 +111,109 @@ export function saveStore(store: ProfileStore): void {
   }
 }
 
+/**
+ * Serialises a store for sharing.
+ *
+ * `exportedAt` is a sibling of the store's own fields and is ignored on read,
+ * so a round-trip still yields exactly the store that went in. It exists so a
+ * file found six weeks later can be dated before it is applied.
+ */
 export function exportStore(store: ProfileStore): string {
-  return JSON.stringify(store, null, 2);
+  return JSON.stringify({ ...store, exportedAt: new Date().toISOString() }, null, 2);
+}
+
+export type ImportDecision = 'replace' | 'add' | 'skip';
+
+export interface ImportCandidate {
+  profile: TrainerProfile;
+  /** The profile already here with the same id, if any. */
+  existing: TrainerProfile | null;
+  /** What will happen unless the user says otherwise. */
+  suggested: ImportDecision;
+}
+
+export interface ImportPreview {
+  exportedAt: string | null;
+  candidates: ImportCandidate[];
+}
+
+/**
+ * Describes what a file would do, without doing any of it.
+ *
+ * Import used to replace the whole store outright, which quietly destroyed
+ * whatever was on the receiving device — the exact thing that happens when one
+ * family member shares a roster with another. Nothing is applied until the
+ * caller has seen this and chosen per profile.
+ */
+export function previewImport(text: string, store: ProfileStore): ImportPreview {
+  const incoming = importStore(text);
+  let exportedAt: string | null = null;
+  try {
+    const raw = JSON.parse(text) as { exportedAt?: unknown };
+    if (typeof raw.exportedAt === 'string') exportedAt = raw.exportedAt;
+  } catch {
+    // importStore already validated the JSON; a missing date is not an error.
+  }
+
+  return {
+    exportedAt,
+    candidates: incoming.profiles.map((profile) => {
+      const existing = store.profiles.find((p) => p.id === profile.id) ?? null;
+      return {
+        profile,
+        existing,
+        // Updating the same trainer is the common case and is safe; anything
+        // unrecognised is added rather than allowed to overwrite by accident.
+        suggested: existing ? 'replace' : 'add',
+      };
+    }),
+  };
+}
+
+/**
+ * Applies an import according to the caller's decisions.
+ *
+ * Profiles are matched by id, so a trainer who round-trips between devices
+ * updates in place instead of accumulating duplicates. Granularity stops at the
+ * profile: replacing a whole roster matches how people think about this
+ * ("here is my current team"), where a per-Pokémon merge would need conflict
+ * rules that are not worth it for a household.
+ */
+export function applyImport(
+  store: ProfileStore,
+  preview: ImportPreview,
+  decisions: Record<string, ImportDecision>,
+): ProfileStore {
+  let profiles = [...store.profiles];
+
+  for (const { profile, existing } of preview.candidates) {
+    const decision = decisions[profile.id] ?? 'skip';
+    if (decision === 'skip') continue;
+
+    if (decision === 'replace' && existing) {
+      profiles = profiles.map((p) => (p.id === profile.id ? profile : p));
+      continue;
+    }
+
+    // Adding: never reuse an id that is already here, or the two would collide
+    // and one would become unreachable.
+    const taken = profiles.some((p) => p.id === profile.id);
+    profiles.push(
+      taken
+        ? { ...profile, id: newId('p'), name: `${profile.name} (imported)` }
+        : profile,
+    );
+  }
+
+  if (profiles.length === 0) return store;
+
+  return {
+    ...store,
+    profiles,
+    activeProfileId: profiles.some((p) => p.id === store.activeProfileId)
+      ? store.activeProfileId
+      : profiles[0].id,
+  };
 }
 
 /** Throws with a readable message so the UI can show why an import failed. */

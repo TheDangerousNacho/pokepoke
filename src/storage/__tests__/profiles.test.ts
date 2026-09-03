@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
-  addProfile, emptyStore, exportStore, importStore, partyMembers, removeParty,
-  removeProfile, renameProfile, saveParty, updateRoster, type StoredPokemon,
+  addProfile, applyImport, emptyStore, exportStore, importStore, partyMembers,
+  previewImport, removeParty, removeProfile, renameProfile, saveParty,
+  updateRoster, type StoredPokemon,
 } from '../profiles';
 
 const mon = (id: string, speciesId: string): StoredPokemon => ({
@@ -138,5 +139,101 @@ describe('profiles', () => {
   it('renames without disturbing the roster', () => {
     const store = renameProfile(seeded(), 'nope', 'X');
     expect(store.profiles[0].roster).toHaveLength(3);
+  });
+});
+
+describe('non-destructive import', () => {
+  const other = () => {
+    let s = emptyStore();
+    s = renameProfile(s, s.activeProfileId, 'Kid A');
+    return updateRoster(s, s.activeProfileId, [mon('k1', 'MACHOKE')]);
+  };
+
+  it('never applies anything from a preview alone', () => {
+    const mine = seeded();
+    const before = JSON.stringify(mine);
+    previewImport(exportStore(other()), mine);
+    expect(JSON.stringify(mine)).toBe(before);
+  });
+
+  it('adds an unrecognised profile instead of replacing everything', () => {
+    // The bug this replaces: importing a friend's file wiped your own roster.
+    const mine = seeded();
+    const preview = previewImport(exportStore(other()), mine);
+    const merged = applyImport(mine, preview, { [preview.candidates[0].profile.id]: 'add' });
+
+    expect(merged.profiles).toHaveLength(2);
+    expect(merged.profiles[0].roster).toHaveLength(3); // mine, untouched
+    expect(merged.profiles[1].name).toBe('Kid A');
+  });
+
+  it('defaults to adding what it does not recognise', () => {
+    const preview = previewImport(exportStore(other()), seeded());
+    expect(preview.candidates[0].suggested).toBe('add');
+    expect(preview.candidates[0].existing).toBeNull();
+  });
+
+  it('updates in place when the same trainer comes back', () => {
+    const mine = seeded();
+    let theirCopy = mine;
+    theirCopy = updateRoster(theirCopy, theirCopy.activeProfileId, [
+      ...theirCopy.profiles[0].roster, mon('m4', 'GYARADOS'),
+    ]);
+
+    const preview = previewImport(exportStore(theirCopy), mine);
+    expect(preview.candidates[0].suggested).toBe('replace');
+
+    const merged = applyImport(mine, preview, { [preview.candidates[0].profile.id]: 'replace' });
+    expect(merged.profiles).toHaveLength(1);
+    expect(merged.profiles[0].roster).toHaveLength(4);
+  });
+
+  it('skips what the user declines', () => {
+    const mine = seeded();
+    const preview = previewImport(exportStore(other()), mine);
+    const merged = applyImport(mine, preview, { [preview.candidates[0].profile.id]: 'skip' });
+    expect(merged.profiles).toHaveLength(1);
+    expect(merged).toEqual(mine);
+  });
+
+  it('treats an unlisted profile as skip rather than guessing', () => {
+    const mine = seeded();
+    const preview = previewImport(exportStore(other()), mine);
+    expect(applyImport(mine, preview, {})).toEqual(mine);
+  });
+
+  it('does not collide ids when adding a profile that is already here', () => {
+    const mine = seeded();
+    const preview = previewImport(exportStore(mine), mine);
+    const merged = applyImport(mine, preview, { [preview.candidates[0].profile.id]: 'add' });
+
+    expect(merged.profiles).toHaveLength(2);
+    expect(new Set(merged.profiles.map((p) => p.id)).size).toBe(2);
+    expect(merged.profiles[1].name).toMatch(/imported/);
+  });
+
+  it('keeps the active profile pointing at something real', () => {
+    const mine = seeded();
+    const preview = previewImport(exportStore(other()), mine);
+    const merged = applyImport(mine, preview, { [preview.candidates[0].profile.id]: 'add' });
+    expect(merged.profiles.some((p) => p.id === merged.activeProfileId)).toBe(true);
+  });
+
+  it('reports when the file was exported', () => {
+    const preview = previewImport(exportStore(seeded()), emptyStore());
+    expect(preview.exportedAt).toBeTruthy();
+    expect(Number.isNaN(Date.parse(preview.exportedAt!))).toBe(false);
+  });
+
+  it('survives a file with no export date', () => {
+    const bare = JSON.stringify({ version: 2, activeProfileId: 'p1', profiles: [
+      { id: 'p1', name: 'Old', roster: [mon('m1', 'MACHAMP')], parties: [] },
+    ] });
+    expect(previewImport(bare, emptyStore()).exportedAt).toBeNull();
+  });
+
+  it('still round-trips exactly, export date and all', () => {
+    const store = seeded();
+    expect(importStore(exportStore(store))).toEqual(store);
   });
 });

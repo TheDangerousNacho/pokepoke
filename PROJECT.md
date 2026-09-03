@@ -270,6 +270,27 @@ level at the same CP requires worse IVs, so the low end is both likelier and
 the safer error — it understates damage rather than promising a win the team
 cannot deliver.
 
+### Import is non-destructive — FIXED
+
+Importing a file used to call `importStore` and replace the entire store. That
+silently destroyed whatever was on the receiving device — precisely what
+happens when one family member shares a roster with another, which is the only
+reason the feature exists. localStorage keeps no history, so there was no undo.
+
+`previewImport` now parses a file and reports what it *would* do without
+touching anything; `applyImport` acts only on explicit per-profile decisions.
+Profiles are matched by id, so a trainer moving between devices updates in
+place rather than accumulating duplicates, and adding a profile whose id is
+already present mints a new one instead of colliding.
+
+Granularity stops at the profile. Replacing a whole roster matches how people
+think about this ("here is my current team"); a per-Pokémon merge would need
+conflict rules not worth having for a household.
+
+Exports now carry `exportedAt`, shown as "Exported 3 days ago" so a stale file
+is visible before it is applied. It is a sibling of the store's own fields and
+ignored on read, so a round-trip still yields exactly what went in.
+
 ### Saved parties — BUILT
 
 Named parties per trainer profile, chosen per person in the lobby instead of
