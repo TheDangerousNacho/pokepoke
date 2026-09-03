@@ -48,7 +48,33 @@ against PokeMiners + community sources during Phase 1, not assumed.
 - **Reference implementation**: PvPoke (open source) for damage formula, stat
   calculation, and Game Master parsing. Study, don't copy wholesale.
 - **Validation**: Pokebattler DPS/TDO/time-to-win numbers for a handful of known
-  matchups, frozen as test fixtures.
+  matchups, frozen as test fixtures. **Still needed — see Outstanding inputs.**
+
+## What turned out to be in the Game Master
+
+More than the brief assumed. All of these are read from the dump rather than
+hardcoded, so they cannot drift:
+
+- STAB (1.2), weather bonus (1.2), shadow attack/defense (1.2 / 0.8333)
+- Friendship attack multipliers, all six levels
+- Mega lobby boost (1.3 same type, 1.1 different)
+- Weather condition → boosted types
+- Swap duration, dodge window and reduction, boss energy regen per HP lost
+- **Elite-TM-only moves, flagged per species** (`eliteQuickMove` /
+  `eliteCinematicMove`). Phase 3 assumed this needed a hand-maintained legacy
+  list; mostly it does not. A small supplement may still be needed for
+  event-exclusive moves that are not Elite-TM-gated.
+
+What is *not* in the dump: the raid tier table (boss HP, boss CPM, timer).
+That lives in `src/engine/raidTiers.ts` and is **currently an unverified stub**.
+
+## Outstanding inputs (blocking full Phase 1 confidence)
+
+1. **Raid tier constants** — boss HP, boss CPM and timer per tier, from a
+   primary source. `RAID_TIER_DATA_VERIFIED` in `src/engine/raidTiers.ts` stays
+   `false` until then, and no time-to-win figure should be shown as trustworthy.
+2. **Pokebattler fixtures** — 4–6 matchups (boss + attacker + moveset + the
+   DPS/TDO Pokebattler reports) to freeze as engine tests.
 
 ## Phases
 

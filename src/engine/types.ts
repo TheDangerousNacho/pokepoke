@@ -58,7 +58,13 @@ export interface BattleSettings {
   bossEnergyRegenerationPerHealthLost: number;
   enemyAttackIntervalS: number;
   maximumAttackersPerBattle: number;
+  megaBoostSameType: number;
+  megaBoostDifferentType: number;
 }
+
+export type WeatherCondition =
+  | 'CLEAR' | 'RAINY' | 'PARTLY_CLOUDY' | 'OVERCAST'
+  | 'WINDY' | 'SNOW' | 'FOG';
 
 export interface GameMaster {
   source: { repo: string; commit: string; path: string; committed: string; generatedAt: string };
@@ -70,6 +76,8 @@ export interface GameMaster {
   settings: BattleSettings;
   /** Index = friendship level; 0 = not friends. */
   friendshipAttackMultipliers: number[];
+  /** Weather condition -> the move types it boosts. */
+  weatherAffinities: Record<WeatherCondition, PokemonType[]>;
   moves: Record<string, Move>;
   species: Record<string, Species>;
 }

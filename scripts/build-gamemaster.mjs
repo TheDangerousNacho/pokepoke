@@ -178,7 +178,11 @@ function buildSpecies(templates, resolveMove) {
 function buildSettings(idx) {
   const b = idx.BATTLE_SETTINGS.battleSettings;
   const w = idx.WEATHER_BONUS_SETTINGS.weatherBonusSettings;
+  const m = idx.MEGA_EVO_SETTINGS.megaEvoSettings;
   return {
+    // A mega in the lobby boosts every attacker's damage, not just its owner's.
+    megaBoostSameType: m.attackBoostFromMegaSameType,
+    megaBoostDifferentType: m.attackBoostFromMegaDifferentType,
     stab: b.sameTypeAttackBonusMultiplier,
     weatherBonus: w.attackBonusMultiplier,
     shadowAttackMultiplier: b.shadowPokemonAttackBonusMultiplier,
@@ -192,6 +196,20 @@ function buildSettings(idx) {
     enemyAttackIntervalS: b.enemyAttackInterval,
     maximumAttackersPerBattle: b.maximumAttackersPerBattle,
   };
+}
+
+/** Weather condition -> the move types it boosts. */
+function buildWeatherAffinities(templates) {
+  const out = {};
+  for (const t of templates) {
+    const w = t.data.weatherAffinities;
+    if (!w) continue;
+    out[w.weatherCondition] = w.pokemonType.map(shortType);
+  }
+  if (Object.keys(out).length < 6) {
+    throw new Error(`expected the full weather table, got ${Object.keys(out)}`);
+  }
+  return out;
 }
 
 function buildFriendship(templates) {
@@ -225,6 +243,7 @@ async function main() {
     cpMultipliers: idx.PLAYER_LEVEL_SETTINGS.playerLevel.cpMultiplier,
     settings: buildSettings(idx),
     friendshipAttackMultipliers: buildFriendship(templates),
+    weatherAffinities: buildWeatherAffinities(templates),
     moves,
     species: buildSpecies(templates, resolveMove),
   };
