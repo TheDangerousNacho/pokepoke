@@ -1,0 +1,17 @@
+name = "pokepoke-sync"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# Household roster storage. One KV entry per trainer profile.
+[[kv_namespaces]]
+binding = "ROSTERS"
+id = "REPLACE_WITH_YOUR_KV_ID"
+preview_id = "local-preview"
+
+[vars]
+# The site allowed to call this Worker. Anything else is refused by CORS.
+ALLOWED_ORIGIN = "https://thedangerousnacho.github.io"
+
+
+# SYNC_SECRET is NOT set here — it is a secret, not a var:
+#   wrangler secret put SYNC_SECRET

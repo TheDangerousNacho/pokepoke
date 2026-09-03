@@ -10,6 +10,7 @@ import {
 import { BossPicker, type BossListEntry } from './ui/BossPicker';
 import { PartyManager } from './ui/PartyManager';
 import { ProfileBar } from './ui/ProfileBar';
+import { SyncPanel } from './ui/SyncPanel';
 import { Results } from './ui/Results';
 import { RosterEditor } from './ui/RosterEditor';
 import { ScanTab } from './ui/ScanTab';
@@ -115,6 +116,7 @@ export default function App() {
       {tab === 'roster' && (
         <>
           <ProfileBar store={store} onChange={setStore} onUndoableChange={undoable} />
+          <SyncPanel store={store} onSynced={undoable} />
           <PartyManager
             profile={profile}
             onSave={(party) => setStore(saveParty(store, profile.id, party))}

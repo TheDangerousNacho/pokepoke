@@ -9,7 +9,7 @@ import type { RosterEntry } from '../engine/stats';
  */
 
 const KEY = 'pokepoke.profiles.v1';
-const VERSION = 2;
+const VERSION = 3;
 
 /**
  * A roster entry with a stable identity.
@@ -35,6 +35,13 @@ export interface TrainerProfile {
   name: string;
   roster: StoredPokemon[];
   parties: SavedParty[];
+  /**
+   * When this profile last changed on some device, ISO 8601.
+   *
+   * Sync compares these per profile rather than syncing the store as a whole,
+   * so one person editing their own roster cannot clobber someone else's.
+   */
+  updatedAt: string;
 }
 
 export interface ProfileStore {
@@ -46,8 +53,12 @@ export interface ProfileStore {
 export const newId = (prefix = 'x') =>
   `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 
+export const now = () => new Date().toISOString();
+
 export function emptyStore(): ProfileStore {
-  const first: TrainerProfile = { id: newId('p'), name: 'Me', roster: [], parties: [] };
+  const first: TrainerProfile = {
+    id: newId('p'), name: 'Me', roster: [], parties: [], updatedAt: now(),
+  };
   return { version: VERSION, activeProfileId: first.id, profiles: [first] };
 }
 
@@ -81,7 +92,15 @@ function parseStore(raw: unknown): ProfileStore | null {
       // a party that silently has fewer members than it claims.
       .map((q) => ({ ...q, memberIds: q.memberIds.filter((id) => known.has(id)) }));
 
-    profiles.push({ id: p.id, name: p.name, roster, parties });
+    profiles.push({
+      id: p.id,
+      name: p.name,
+      roster,
+      parties,
+      // Profiles saved before sync existed get stamped now: on this device
+      // that state IS the freshest known version of them.
+      updatedAt: typeof p.updatedAt === 'string' ? p.updatedAt : now(),
+    });
   }
   if (profiles.length === 0) return null;
 
@@ -200,7 +219,7 @@ export function applyImport(
     const taken = profiles.some((p) => p.id === profile.id);
     profiles.push(
       taken
-        ? { ...profile, id: newId('p'), name: `${profile.name} (imported)` }
+        ? { ...profile, id: newId('p'), name: `${profile.name} (imported)`, updatedAt: now() }
         : profile,
     );
   }
@@ -230,7 +249,9 @@ export function importStore(text: string): ProfileStore {
 }
 
 export function addProfile(store: ProfileStore, name: string): ProfileStore {
-  const profile: TrainerProfile = { id: newId('p'), name: name.trim() || 'Trainer', roster: [], parties: [] };
+  const profile: TrainerProfile = {
+    id: newId('p'), name: name.trim() || 'Trainer', roster: [], parties: [], updatedAt: now(),
+  };
   return { ...store, profiles: [...store.profiles, profile], activeProfileId: profile.id };
 }
 
@@ -244,12 +265,21 @@ export function removeProfile(store: ProfileStore, id: string): ProfileStore {
   };
 }
 
+/**
+ * Applies a change to one profile and stamps it as modified.
+ *
+ * Every mutation goes through here so nothing can be changed without moving
+ * its timestamp — a silent edit would be invisible to sync and quietly lost.
+ */
 function updateProfile(
   store: ProfileStore,
   id: string,
   change: (p: TrainerProfile) => TrainerProfile,
 ): ProfileStore {
-  return { ...store, profiles: store.profiles.map((p) => (p.id === id ? change(p) : p)) };
+  return {
+    ...store,
+    profiles: store.profiles.map((p) => (p.id === id ? { ...change(p), updatedAt: now() } : p)),
+  };
 }
 
 export function updateRoster(store: ProfileStore, id: string, roster: StoredPokemon[]): ProfileStore {

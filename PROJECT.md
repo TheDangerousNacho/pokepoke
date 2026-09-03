@@ -169,6 +169,36 @@ Shadow attackers are included, which also checks the shadow stat multipliers.
 Megas are excluded: whether a mega boosts itself is uncertain, and guessing
 would muddy a validation baseline.
 
+## Cross-device sync — BUILT (not deployed)
+
+`worker/` is a Cloudflare Worker storing one KV entry per trainer profile.
+`src/storage/sync.ts` reconciles against it. **Optional and opt-in**: the app
+works fully without it, and a Worker being down is never more than an error
+message.
+
+- **localStorage stays the source of truth.** Sync is a reconciliation that
+  runs when asked. Nothing about loading or using the app depends on the
+  network, because the whole point is that it works at a gym with no signal.
+- **Per profile, last-write-wins on `updatedAt`.** That is a deliberate limit:
+  it handles the real case — different people editing their own rosters —
+  without conflict rules a household does not need. Two devices editing the
+  *same* profile will still lose one side's edit, so the result reports exactly
+  what moved, and a pull is applied through the undo mechanism.
+- **The Worker has no merge logic.** The client decides what to push or pull.
+  Keeping the only stateful piece boring means an outage degrades the app to
+  exactly what it was before sync existed.
+- **The passphrase is a lock on a public endpoint, not real security.** It is
+  compared in constant time, the Worker refuses everything if it is unset, and
+  CORS echoes only the configured origin rather than a wildcard.
+
+Every mutation goes through `updateProfile`, which stamps `updatedAt` — a
+silent edit would be invisible to sync and quietly lost. Storage migrates v2 to
+v3, stamping existing profiles as modified now, since on that device their
+current state is the freshest version that exists.
+
+**Deployment needs a Cloudflare account and `wrangler login`**, so it is not
+wired up — see `worker/README.md` for the four commands.
+
 ## Recovering from mistakes
 
 **Error boundary.** A render error used to leave a blank page. On a phone that

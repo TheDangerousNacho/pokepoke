@@ -33,3 +33,4 @@ public/_test/
 
 # Tesseract runtime, staged by `npm run prepare:ocr` (CI does this pre-build).
 public/tesseract/
+.dev.vars
