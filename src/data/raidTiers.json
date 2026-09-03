@@ -1,0 +1,92 @@
+{
+  "1": {
+    "pokebattlerTier": "RAID_LEVEL_1",
+    "bossHp": 600,
+    "bossCpm": 0.5974,
+    "timerSeconds": 180,
+    "label": "1",
+    "soloable": true,
+    "nominalLevel": "20"
+  },
+  "3": {
+    "pokebattlerTier": "RAID_LEVEL_3",
+    "bossHp": 3600,
+    "bossCpm": 0.73,
+    "timerSeconds": 180,
+    "label": "3",
+    "soloable": true,
+    "nominalLevel": "30"
+  },
+  "4": {
+    "pokebattlerTier": "RAID_LEVEL_4",
+    "bossHp": 9000,
+    "bossCpm": 1,
+    "timerSeconds": 180,
+    "label": "4",
+    "soloable": false,
+    "nominalLevel": "40"
+  },
+  "5": {
+    "pokebattlerTier": "RAID_LEVEL_5",
+    "bossHp": 15000,
+    "bossCpm": 0.79,
+    "timerSeconds": 300,
+    "label": "5",
+    "soloable": false,
+    "nominalLevel": "50"
+  },
+  "6": {
+    "pokebattlerTier": "RAID_LEVEL_6",
+    "bossHp": 22500,
+    "bossCpm": 0.79,
+    "timerSeconds": 300,
+    "label": "6",
+    "soloable": false,
+    "nominalLevel": "60"
+  },
+  "MEGA": {
+    "pokebattlerTier": "RAID_LEVEL_MEGA",
+    "bossHp": 9000,
+    "bossCpm": 0.79,
+    "timerSeconds": 300,
+    "label": "MEGA",
+    "soloable": false,
+    "nominalLevel": "45"
+  },
+  "MEGA_LEGENDARY": {
+    "pokebattlerTier": "RAID_LEVEL_MEGA_5",
+    "bossHp": 22500,
+    "bossCpm": 0.79,
+    "timerSeconds": 300,
+    "label": "MEGA_LEGENDARY",
+    "soloable": false,
+    "nominalLevel": "70"
+  },
+  "ELITE": {
+    "pokebattlerTier": "RAID_LEVEL_ELITE",
+    "bossHp": 20000,
+    "bossCpm": 0.985,
+    "timerSeconds": 300,
+    "label": "ELITE",
+    "soloable": false,
+    "nominalLevel": "65"
+  },
+  "SHADOW_3": {
+    "pokebattlerTier": "RAID_LEVEL_3_SHADOW",
+    "bossHp": 4000,
+    "bossCpm": 0.76,
+    "timerSeconds": 180,
+    "label": "SHADOW_3",
+    "soloable": true,
+    "nominalLevel": "30"
+  },
+  "SHADOW_5": {
+    "pokebattlerTier": "RAID_LEVEL_5_SHADOW",
+    "bossHp": 15000,
+    "bossCpm": 0.82,
+    "timerSeconds": 300,
+    "label": "SHADOW_5",
+    "soloable": false,
+    "nominalLevel": "50"
+  }
+}

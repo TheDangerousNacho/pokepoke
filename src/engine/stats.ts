@@ -1,6 +1,6 @@
 import { cpm } from './cpm';
 import { gm, getSpecies } from './gamemaster';
-import { getTier, type RaidTier } from './raidTiers';
+import { BOSS_IV_ATTACK, BOSS_IV_DEFENSE, getTier, type RaidTier } from './raidTiers';
 import type { PokemonType, Species } from './types';
 
 export interface IVs {
@@ -83,8 +83,8 @@ export function buildBoss(spec: RaidBossSpec): Combatant {
   return {
     name: species.id,
     types: species.types,
-    attack: (species.baseAttack + t.bossIvAttack) * t.bossCpm,
-    defense: (species.baseDefense + t.bossIvDefense) * t.bossCpm,
+    attack: (species.baseAttack + BOSS_IV_ATTACK) * t.bossCpm,
+    defense: (species.baseDefense + BOSS_IV_DEFENSE) * t.bossCpm,
     hp: t.bossHp,
     fastMove: spec.fastMove,
     chargedMove: spec.chargedMove,

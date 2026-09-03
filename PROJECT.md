@@ -68,13 +68,49 @@ hardcoded, so they cannot drift:
 What is *not* in the dump: the raid tier table (boss HP, boss CPM, timer).
 That lives in `src/engine/raidTiers.ts` and is **currently an unverified stub**.
 
-## Outstanding inputs (blocking full Phase 1 confidence)
+## Raid tier constants — sourced
 
-1. **Raid tier constants** — boss HP, boss CPM and timer per tier, from a
-   primary source. `RAID_TIER_DATA_VERIFIED` in `src/engine/raidTiers.ts` stays
-   `false` until then, and no time-to-win figure should be shown as trustworthy.
-2. **Pokebattler fixtures** — 4–6 matchups (boss + attacker + moveset + the
-   DPS/TDO Pokebattler reports) to freeze as engine tests.
+`src/data/raidTiers.json`, refreshed by `npm run fetch:tiers`, comes from
+Pokebattler's public `fight.pokebattler.com/raids` endpoint, which exposes
+`hp`, `cpm` and `combatTimeMs` per tier. Note `bossCpm` is not a player-level
+CPM (tier 4 uses 1.0, Elite 0.985); the tier's displayed level is informational
+only and must never be fed to `cpm()`.
+
+## Validation status — READ BEFORE TRUSTING OUTPUT
+
+| Layer | Validated against | Status |
+|---|---|---|
+| Base stats, CPM, CP | Published max-CP values; PvPoke half-level table | Solid |
+| Type chart, move data | Game Master, with index-order assertions | Solid |
+| Damage formula | Hand calculation on known matchups | Solid |
+| Raid tier constants | Pokebattler `/raids` endpoint | Sourced, not independently confirmed |
+| **Time-step simulation** | **Internal invariants only** | **NOT externally validated** |
+
+The simulation reproduces sensible orderings (super-effective attackers rank
+above resisted ones, shadows out-damage their twins, deeper benches last
+longer) and its absolute DPS numbers are in the right range, but no output has
+been checked against an independent simulator. Treat time-to-win figures as
+indicative, not authoritative.
+
+Why not Pokebattler: their counters endpoint returns aggregates averaged over
+their own attacker pool, using Monte Carlo with randomised boss movesets and a
+dodge model this engine deliberately omits. Matching it exactly would mean
+reimplementing their strategy model. A fair comparison needs either a
+per-attacker endpoint or hand-collected figures from their UI.
+
+### Known simplifications (all bias toward underestimating the player)
+
+- No dodging; every boss hit lands in full.
+- Boss acts on a fixed cycle, not the client's randomised timing.
+- Both sides fire charged moves the instant energy allows.
+- 500ms default reaction delay after each player move.
+- Group size = N identical copies of one party's damage curve.
+
+## Outstanding inputs
+
+1. **Pokebattler fixtures** — hand-collected from their UI (boss + attacker +
+   moveset + reported DPS/TDO/estimator) to turn the simulation row above from
+   "not validated" into a real test.
 
 ## Phases
 

@@ -138,14 +138,14 @@ describe('mega forms', () => {
 
 describe('boss construction', () => {
   it('takes HP from the tier, not from base stamina', () => {
-    const boss = buildBoss({ speciesId: 'MEWTWO', tier: 5, fastMove: 'PSYCHO_CUT_FAST', chargedMove: 'PSYSTRIKE' });
+    const boss = buildBoss({ speciesId: 'MEWTWO', tier: '5', fastMove: 'PSYCHO_CUT_FAST', chargedMove: 'PSYSTRIKE' });
     expect(boss.hp).toBe(15000);
     expect(boss.types).toEqual(['PSYCHIC']);
   });
 
   it('gives the same HP regardless of species within a tier', () => {
-    const a = buildBoss({ speciesId: 'MEWTWO', tier: 5, fastMove: 'PSYCHO_CUT_FAST', chargedMove: 'PSYSTRIKE' });
-    const b = buildBoss({ speciesId: 'RAYQUAZA', tier: 5, fastMove: 'AIR_SLASH_FAST', chargedMove: 'HURRICANE' });
+    const a = buildBoss({ speciesId: 'MEWTWO', tier: '5', fastMove: 'PSYCHO_CUT_FAST', chargedMove: 'PSYSTRIKE' });
+    const b = buildBoss({ speciesId: 'RAYQUAZA', tier: '5', fastMove: 'AIR_SLASH_FAST', chargedMove: 'HURRICANE' });
     expect(a.hp).toBe(b.hp);
     expect(a.defense).not.toBe(b.defense);
   });
