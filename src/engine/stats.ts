@@ -70,6 +70,8 @@ export interface RaidBossSpec {
   tier: RaidTier;
   fastMove: string;
   chargedMove: string;
+  /** Set for mega raid bosses; uses the mega's stat line and types. */
+  megaId?: string;
 }
 
 /**
@@ -77,9 +79,13 @@ export interface RaidBossSpec {
  * computation — that is the whole reason solo/duo/trio is a simple division.
  */
 export function buildBoss(spec: RaidBossSpec): Combatant {
-  const species = getSpecies(spec.speciesId);
+  const species = resolveForm(getSpecies(spec.speciesId), spec.megaId);
   const t = getTier(spec.tier);
 
+  // Shadow raid bosses are not given the usual shadow attack/defense
+  // multipliers here: Pokebattler encodes that difficulty in the tier's own
+  // higher bossCpm (0.82 for shadow tier 5 vs 0.79), so applying both would
+  // double-count it.
   return {
     name: species.id,
     types: species.types,

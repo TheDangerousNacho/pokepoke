@@ -1,0 +1,144 @@
+{
+  "fetchedAt": "2026-09-03T00:49:24.978Z",
+  "source": "https://fight.pokebattler.com/raids",
+  "bosses": [
+    {
+      "speciesId": "AMAURA",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "POWDER_SNOW_FAST",
+      "chargedMove": "WEATHER_BALL_ICE"
+    },
+    {
+      "speciesId": "DRATINI",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "WRAP"
+    },
+    {
+      "speciesId": "HONEDGE",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "PSYCHO_CUT_FAST",
+      "chargedMove": "IRON_HEAD"
+    },
+    {
+      "speciesId": "TYRUNT",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "STOMP"
+    },
+    {
+      "speciesId": "LILLIGANT_HISUIAN",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "MAGICAL_LEAF_FAST",
+      "chargedMove": "PETAL_BLIZZARD"
+    },
+    {
+      "speciesId": "PASSIMIAN",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "COUNTER_FAST",
+      "chargedMove": "BRICK_BREAK"
+    },
+    {
+      "speciesId": "SNEASEL_HISUIAN",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "ROCK_SMASH_FAST",
+      "chargedMove": "AERIAL_ACE"
+    },
+    {
+      "speciesId": "REGICE",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "FROST_BREATH_FAST",
+      "chargedMove": "BLIZZARD"
+    },
+    {
+      "speciesId": "REGIROCK",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "ROCK_THROW_FAST",
+      "chargedMove": "STONE_EDGE"
+    },
+    {
+      "speciesId": "REGISTEEL",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "FLASH_CANNON"
+    },
+    {
+      "speciesId": "GYARADOS",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "BITE_FAST",
+      "chargedMove": "HYDRO_PUMP"
+    },
+    {
+      "speciesId": "SKARMORY",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "STEEL_WING_FAST",
+      "chargedMove": "BRAVE_BIRD"
+    },
+    {
+      "speciesId": "STARMIE",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "HIDDEN_POWER_FAST",
+      "chargedMove": "HYDRO_PUMP"
+    },
+    {
+      "speciesId": "LATIAS",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA_LEGENDARY",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "PSYCHIC"
+    },
+    {
+      "speciesId": "LATIOS",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA_LEGENDARY",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "PSYCHIC"
+    },
+    {
+      "speciesId": "HITMONTOP",
+      "tier": "SHADOW_3",
+      "shiny": true,
+      "fastMove": "ROCK_SMASH_FAST",
+      "chargedMove": "CLOSE_COMBAT"
+    },
+    {
+      "speciesId": "LAMPENT",
+      "tier": "SHADOW_3",
+      "shiny": true,
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "ENERGY_BALL"
+    },
+    {
+      "speciesId": "SNORLAX",
+      "tier": "SHADOW_3",
+      "shiny": true,
+      "fastMove": "ZEN_HEADBUTT_FAST",
+      "chargedMove": "HEAVY_SLAM"
+    },
+    {
+      "speciesId": "GIRATINA",
+      "tier": "SHADOW_5",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "DRAGON_CLAW"
+    }
+  ]
+}

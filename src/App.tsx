@@ -1,122 +1,107 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useMemo, useState } from 'react';
+import './App.css';
+import type { BattleConditions } from './engine/damage';
+import { gm } from './engine/gamemaster';
+import type { WeatherCondition } from './engine/types';
+import { activeProfile, loadStore, saveStore, updateRoster, type ProfileStore } from './storage/profiles';
+import { BossPicker, type BossListEntry } from './ui/BossPicker';
+import { ProfileBar } from './ui/ProfileBar';
+import { Results } from './ui/Results';
+import { RosterEditor } from './ui/RosterEditor';
+import { speciesName } from './ui/format';
 
-function App() {
-  const [count, setCount] = useState(0)
+type Tab = 'boss' | 'roster' | 'results';
+
+const WEATHER: Array<{ value: WeatherCondition | 'NONE'; label: string }> = [
+  { value: 'NONE', label: 'No boost' },
+  { value: 'CLEAR', label: 'Sunny / Clear' },
+  { value: 'RAINY', label: 'Rain' },
+  { value: 'PARTLY_CLOUDY', label: 'Partly cloudy' },
+  { value: 'OVERCAST', label: 'Cloudy' },
+  { value: 'WINDY', label: 'Windy' },
+  { value: 'SNOW', label: 'Snow' },
+  { value: 'FOG', label: 'Fog' },
+];
+
+export default function App() {
+  const [store, setStore] = useState<ProfileStore>(loadStore);
+  const [tab, setTab] = useState<Tab>('boss');
+  const [boss, setBoss] = useState<BossListEntry | null>(null);
+  const [weather, setWeather] = useState<WeatherCondition | 'NONE'>('NONE');
+  const [friendship, setFriendship] = useState(0);
+
+  // Persist on every change; there is no explicit save button by design.
+  useEffect(() => saveStore(store), [store]);
+
+  const profile = activeProfile(store);
+  const conditions = useMemo<BattleConditions>(
+    () => ({
+      weather: weather === 'NONE' ? undefined : weather,
+      friendshipLevel: friendship,
+    }),
+    [weather, friendship],
+  );
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+    <div className="app">
+      <h1>Raid Planner</h1>
+      <p className="small muted" style={{ marginTop: 0 }}>
+        {boss ? `${speciesName(boss.speciesId)} · ` : 'No boss selected · '}
+        {profile.name} · {profile.roster.length} Pokémon
+      </p>
+
+      {tab === 'boss' && (
+        <>
+          <BossPicker
+            selected={boss}
+            onSelect={(b) => setBoss(b)}
+            onChangeMoves={(b) => setBoss(b)}
+          />
+          <h2>Conditions</h2>
+          <div className="card grid-2">
+            <div className="field">
+              <label htmlFor="weather">Weather</label>
+              <select id="weather" value={weather} onChange={(e) => setWeather(e.target.value as WeatherCondition | 'NONE')}>
+                {WEATHER.map((w) => <option key={w.value} value={w.value}>{w.label}</option>)}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="friendship">Friendship</label>
+              <select id="friendship" value={friendship} onChange={(e) => setFriendship(Number(e.target.value))}>
+                {gm.friendshipAttackMultipliers.map((m, i) => (
+                  <option key={i} value={i}>
+                    {i === 0 ? 'Not friends' : `Level ${i} (+${Math.round((m - 1) * 100)}%)`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <p className="small muted">
+            Friendship only applies when you're raiding alongside a friend — it does
+            nothing on a true solo.
           </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+        </>
+      )}
 
-      <div className="ticks"></div>
+      {tab === 'roster' && (
+        <>
+          <ProfileBar store={store} onChange={setStore} />
+          <RosterEditor
+            roster={profile.roster}
+            onChange={(roster) => setStore(updateRoster(store, profile.id, roster))}
+          />
+        </>
+      )}
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {tab === 'results' && <Results boss={boss} roster={profile.roster} conditions={conditions} />}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <nav className="tabs">
+        {([['boss', 'Boss'], ['roster', 'Roster'], ['results', 'Results']] as const).map(([id, label]) => (
+          <button key={id} aria-current={tab === id} onClick={() => setTab(id)}>
+            {label}
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
 }
-
-export default App

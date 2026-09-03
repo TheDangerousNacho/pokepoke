@@ -6,16 +6,20 @@ import { buildAttacker, buildBoss, type Combatant, type RaidBossSpec, type Roste
 export interface SimOptions {
   conditions?: BattleConditions;
   /**
-   * Human reaction time added after each of the player's moves. Real players
-   * do not chain moves frame-perfectly; Pokebattler assumes a similar delay.
-   * Set to 0 for a theoretical ceiling.
+   * Extra delay added after each of the player's moves, modelling imperfect
+   * input. Defaults to 0.
+   *
+   * Careful with this: it is a flat cost per MOVE, not per second, so it
+   * punishes short fast moves hardest. At 500ms it halves the output of a
+   * 1000ms fast move like Bullet Punch, which is not a realistic penalty.
+   * Anything above ~100ms should be treated as a deliberate pessimism knob.
    */
   attackDelayMs?: number;
   /** Time lost re-entering the lobby after the whole party faints. */
   relobbyMs?: number;
 }
 
-const DEFAULTS = { attackDelayMs: 500, relobbyMs: 10_000 } as const;
+const DEFAULTS = { attackDelayMs: 0, relobbyMs: 10_000 } as const;
 
 /** A point on the cumulative-damage curve for one trainer. */
 export interface DamageSample {

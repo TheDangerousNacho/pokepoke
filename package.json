@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "build:gm": "node scripts/build-gamemaster.mjs",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "fetch:bosses": "node scripts/fetch-bosses.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",
