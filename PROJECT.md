@@ -42,7 +42,11 @@ against PokeMiners + community sources during Phase 1, not assumed.
 ## Data sources
 
 - **Species / moves / types / CPM**: PokeMiners `game_masters` (`latest.json`).
-  Vendored at a pinned commit, re-pulled manually on game updates.
+  Vendored at a pinned commit, re-pulled manually on game updates. The 19MB
+  dump is reduced to a 108KB packed bundle by `npm run build:gm` — move names
+  are interned into one id table and every record is a positional tuple, which
+  is what takes it from 460KB to 108KB (34KB gzipped). `unpack` in
+  `src/engine/gamemaster.ts` is the exact inverse and runs once at load.
 - **Current raid bosses**: Leek Duck's boss page, transcribed by hand into
   `src/data/bosses.json` (speciesId, tier, boss moveset).
 - **Reference implementation**: PvPoke (open source) for damage formula, stat

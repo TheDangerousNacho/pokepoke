@@ -26,7 +26,23 @@ const TIER_MAP = {
   RAID_LEVEL_5_SHADOW: 'SHADOW_5',
 };
 
-const gm = JSON.parse(await readFile(GM, 'utf8'));
+const packed = JSON.parse(await readFile(GM, 'utf8'));
+// The shipped bundle is packed (see build-gamemaster.mjs); this script only
+// needs to know which species ids exist and which megas they have.
+const moveName = (i) => packed.moveIds[i];
+const gm = {
+  species: Object.fromEntries(
+    packed.species.map((s) => [
+      s[0],
+      {
+        id: s[0],
+        fastMoves: s[7].map(moveName),
+        chargedMoves: s[8].map(moveName),
+        megas: s[12].map((m) => ({ id: m[0] })),
+      },
+    ]),
+  ),
+};
 
 const res = await fetch(SOURCE);
 if (!res.ok) throw new Error(`fetch failed: ${res.status} ${res.statusText}`);

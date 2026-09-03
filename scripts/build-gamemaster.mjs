@@ -223,6 +223,67 @@ function buildFriendship(templates) {
   return levels; // index = friendship level, 0 = not friends
 }
 
+/**
+ * Packs the bundle for shipping. Two things dominate the raw size: move names
+ * repeated across every species that learns them (182KB), and JSON object keys
+ * repeated 1194 times. So moves become integer indices into one id table, and
+ * every record becomes a positional tuple. `unpack` in src/engine/gamemaster.ts
+ * is the exact inverse.
+ */
+function pack(bundle) {
+  const moveIds = Object.keys(bundle.moves);
+  const moveIndex = new Map(moveIds.map((id, i) => [id, i]));
+  const typeIndex = new Map(bundle.types.map((t, i) => [t, i]));
+
+  const ref = (id) => {
+    const i = moveIndex.get(id);
+    if (i === undefined) throw new Error(`move not in table: ${id}`);
+    return i;
+  };
+  const t = (name) => {
+    const i = typeIndex.get(name);
+    if (i === undefined) throw new Error(`unknown type: ${name}`);
+    return i;
+  };
+
+  const moves = moveIds.map((id) => {
+    const m = bundle.moves[id];
+    return [t(m.type), m.category === 'fast' ? 0 : 1, m.power, m.energy,
+            m.durationMs, m.damageWindowStartMs, m.damageWindowEndMs];
+  });
+
+  const species = Object.values(bundle.species).map((s) => [
+    s.id,
+    // For a base form id === pokemonId and form is null; for a variant
+    // id === form. So storing the base id only when it differs reconstructs
+    // all three fields exactly.
+    s.form === null ? null : s.pokemonId,
+    s.dex,
+    s.types.map(t),
+    s.baseAttack, s.baseDefense, s.baseStamina,
+    s.fastMoves.map(ref), s.chargedMoves.map(ref),
+    s.eliteFastMoves.map(ref), s.eliteChargedMoves.map(ref),
+    s.hasShadow ? 1 : 0,
+    s.megas.map((m) => [m.id, m.types.map(t), m.baseAttack, m.baseDefense, m.baseStamina]),
+  ]);
+
+  return {
+    format: 2,
+    source: bundle.source,
+    types: bundle.types,
+    typeChart: bundle.types.map((name) => bundle.typeChart[name]),
+    cpMultipliers: bundle.cpMultipliers,
+    settings: bundle.settings,
+    friendshipAttackMultipliers: bundle.friendshipAttackMultipliers,
+    weatherAffinities: Object.fromEntries(
+      Object.entries(bundle.weatherAffinities).map(([k, v]) => [k, v.map(t)]),
+    ),
+    moveIds,
+    moves,
+    species,
+  };
+}
+
 async function main() {
   await ensureVendor();
   const templates = JSON.parse(await readFile(VENDOR, 'utf8'));
@@ -249,7 +310,8 @@ async function main() {
   };
 
   await mkdir(dirname(OUT), { recursive: true });
-  await writeFile(OUT, JSON.stringify(bundle));
+  const packed = pack(bundle);
+  await writeFile(OUT, JSON.stringify(packed));
   const kb = ((await stat(OUT)).size / 1024).toFixed(0);
 
   const sp = Object.values(bundle.species);

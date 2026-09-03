@@ -119,3 +119,42 @@ describe('stab', () => {
     expect(stab('DRAGON', ['FIRE', 'FLYING'])).toBe(1);
   });
 });
+
+describe('packed bundle round-trip', () => {
+  it('reconstructs id / pokemonId / form consistently', () => {
+    // The pack step stores the base id only for variants, so these two shapes
+    // are the only legal outcomes. A decoder bug would break one of them.
+    for (const s of Object.values(gm.species)) {
+      if (s.form === null) {
+        expect(s.id).toBe(s.pokemonId);
+      } else {
+        expect(s.form).toBe(s.id);
+        expect(s.pokemonId).not.toBe(s.id);
+      }
+    }
+  });
+
+  it('resolves every interned move index to a real move', () => {
+    for (const s of Object.values(gm.species)) {
+      for (const id of [...s.fastMoves, ...s.chargedMoves, ...s.eliteFastMoves, ...s.eliteChargedMoves]) {
+        expect(typeof id).toBe('string');
+        expect(gm.moves[id]).toBeDefined();
+      }
+    }
+  });
+
+  it('keeps type names, not indices, on the decoded records', () => {
+    for (const s of Object.values(gm.species)) {
+      expect(s.types.length).toBeGreaterThan(0);
+      for (const t of s.types) expect(gm.types).toContain(t);
+      for (const m of s.megas) for (const t of m.types) expect(gm.types).toContain(t);
+    }
+    for (const list of Object.values(gm.weatherAffinities)) {
+      for (const t of list) expect(gm.types).toContain(t);
+    }
+  });
+
+  it('rebuilds the type chart keyed by name', () => {
+    for (const t of gm.types) expect(gm.typeChart[t]).toHaveLength(18);
+  });
+});
