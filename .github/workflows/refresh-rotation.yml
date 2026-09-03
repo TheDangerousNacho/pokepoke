@@ -1,0 +1,70 @@
+name: Refresh raid rotation
+
+# Raid bosses rotate every couple of weeks. Left to a manual step this quietly
+# goes stale, and a stale rotation is worse than an obviously empty one: the
+# app confidently plans for bosses that are no longer there.
+on:
+  schedule:
+    # Mondays, 12:00 UTC. Rotations usually change on a Tuesday, so this picks
+    # up the previous change and gives a day's margin before the next.
+    - cron: '0 12 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Both scripts validate what they fetch and exit non-zero if Pokebattler
+      # changes shape, so a silent bad refresh fails loudly instead.
+      - run: npm run fetch:bosses
+      - run: npm run fetch:tiers
+
+      # The game master is deliberately NOT refreshed here. It is pinned to a
+      # commit, and bumping it can move every damage number in the app — that
+      # deserves a human looking at the test results, not a cron job.
+
+      - id: diff
+        run: |
+          if git diff --quiet -- src/data; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Rotation unchanged."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- src/data
+          fi
+
+      - name: Commit
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data
+          git commit -m "Refresh raid rotation
+
+          Automated by .github/workflows/refresh-rotation.yml."
+          git push
+
+  # A push made with GITHUB_TOKEN does not trigger other workflows, so the
+  # deploy has to be invoked rather than relied upon.
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

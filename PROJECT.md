@@ -56,6 +56,32 @@ library default has a blob worker `importScripts` a CDN, which is a cross-origin
 load from an opaque origin — it worked in local dev and failed on the live site.
 That bug was only findable by testing the deployed URL.
 
+## Offline
+
+The app is meant to open at a raid gym on one bar of signal, so a service
+worker (via `vite-plugin-pwa`) precaches the shell — about 400KB across ten
+entries. Everything the calculator needs is already local: the game master
+rides inside the JS bundle and rosters live in localStorage, so with the shell
+cached the whole tool works with no network at all.
+
+The ~23MB Tesseract runtime is deliberately **excluded from the precache** and
+cached on use instead (`CacheFirst`). Precaching it would make a first visit
+download 23MB for a feature most sessions never open; caching on use means only
+the first scan pays, and later ones work offline too.
+
+Disabled in dev — a service worker caching a dev server is a debugging trap.
+
+## Keeping the rotation fresh
+
+`.github/workflows/refresh-rotation.yml` runs `fetch:bosses` and `fetch:tiers`
+weekly, commits only if something changed, and then explicitly calls the deploy
+workflow. That last part is not optional: a push made with `GITHUB_TOKEN` does
+not trigger other workflows, so a naive refresh would commit and never ship.
+
+The **game master is deliberately not refreshed** by this job. It is pinned to
+a commit and bumping it can move every damage number in the app, which deserves
+a human reading the test results rather than a cron job.
+
 ## Data sources
 
 - **Species / moves / types / CPM**: PokeMiners `game_masters` (`latest.json`).

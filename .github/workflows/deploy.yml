@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Callable so the rotation refresh can deploy its own commit. A push made
+  # with GITHUB_TOKEN does not trigger workflows, so it has to ask explicitly.
+  workflow_call:
 
 # Allow the workflow to publish Pages, nothing more.
 permissions:
