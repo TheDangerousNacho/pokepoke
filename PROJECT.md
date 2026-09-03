@@ -317,6 +317,42 @@ Exports now carry `exportedAt`, shown as "Exported 3 days ago" so a stale file
 is visible before it is applied. It is a sibling of the store's own fields and
 ignored on read, so a round-trip still yields exactly what went in.
 
+### Power-up planning — BUILT
+
+`src/engine/leveling.ts` answers the question the verdict raises: given a raid
+you are losing, what would it cost to win it? Shown in Results under the
+verdict, only when the lobby is currently losing.
+
+Greedy on **damage per stardust**, not per level. A level at 40 costs several
+times what the same level costs at 25, so ranking on raw damage would keep
+pointing at the expensive end of the roster.
+
+Three things went wrong before it gave useful advice, each found by reading
+real output rather than by a failing test:
+
+- **Half-level steps score zero.** Per-hit damage is floored, so a single half
+  level very often changes no integer at all. The first version stepped by 0.5,
+  scored every candidate at zero gain, and confidently reported that nothing
+  could be done. Candidates must be big enough to move a floored number.
+- **Large jumps produce absurd advice.** Allowing eight-level jumps let one
+  weak Pokémon win a round on dust-efficiency and absorb the whole budget — the
+  opening instruction was to spend 393,000 dust taking a Magmar to level 48.
+  Jumps are now 1–3 levels, with larger moves emerging from repeated selection
+  and merged into one instruction.
+- **A hopeless raid should say so.** The planner used to grind out 1.4M dust of
+  power-ups across seven Pokémon and still lose. It now checks the ceiling
+  first — everyone at level 50 — and if that loses, returns no plan and reports
+  how far the ceiling gets, because the honest answer is different Pokémon or
+  another trainer, not stardust.
+
+The ceiling check also has to be a candidate target during the search: near the
+top, flooring means no 1–3 level jump moves the number even though a larger one
+does, and without it the search stalled at 98.7% of a win it had already proven
+reachable.
+
+XL candy is reported separately from ordinary candy, since it is far scarcer
+and a plan needing 700 XL is not the same as one needing 700 candy.
+
 ### Saved parties — BUILT
 
 Named parties per trainer profile, chosen per person in the lobby instead of

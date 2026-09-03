@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { BattleConditions } from '../engine/damage';
 import { identicalLobby, simulateLobby, type LobbyTrainer } from '../engine/lobby';
+import { planPowerUps, type PowerUpPlan } from '../engine/leveling';
 import { rankAttackers } from '../engine/simulate';
 import type { RosterEntry } from '../engine/stats';
 import { partyMembers, type TrainerProfile } from '../storage/profiles';
@@ -62,10 +63,22 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
           }))
         : null;
 
+    const lobby = simulateLobby(parties, boss, { conditions });
+
+    // For a single trainer the page talks about solo/duo/trio, so plan for the
+    // trio — planning for a lone trainer would answer a question the verdict
+    // above is not asking.
+    const planFor = groupEstimates
+      ? identicalLobby(parties[0].party, 3, parties[0].name)
+      : parties;
+    const worstCase = groupEstimates ? groupEstimates[2].lobby : lobby;
+
     return {
       parties,
       groupEstimates,
-      lobby: simulateLobby(parties, boss, { conditions }),
+      lobby,
+      // Only worth the ~70ms when there is actually something to fix.
+      plan: worstCase.won ? null : planPowerUps(planFor, boss, { conditions }),
       ranked: rankAttackers(inLobby.flatMap((p) => p.roster), boss, { conditions }),
     };
   }, [boss, inLobby.map((p) => p.id).join(','), chosenParty, profiles, conditions]);
@@ -183,6 +196,10 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
             </>
           )}
 
+          {result.plan && (
+            <PowerUpAdvice plan={result.plan} trio={Boolean(result.groupEstimates)} />
+          )}
+
           {result.lobby.megaBoostTypes.length > 0 && (
             <p className="small muted">
               Mega boost active ({result.lobby.megaBoostTypes.join(', ')}) — a mega
@@ -241,5 +258,78 @@ function Verdict({ label, won, timeToWinMs, fraction }: {
         </>
       )}
     </div>
+  );
+}
+
+/**
+ * What it would cost to turn this loss into a win.
+ *
+ * Shown only when the raid is currently lost, because it is the answer to the
+ * question the verdict just raised.
+ */
+function PowerUpAdvice({ plan, trio }: { plan: PowerUpPlan; trio: boolean }) {
+  const who = trio ? 'a trio' : 'this lobby';
+  const num = (n: number) => n.toLocaleString();
+
+  if (!plan.achievable) {
+    return (
+      <>
+        <h2>What would it take?</h2>
+        <div className="card">
+          <p style={{ margin: 0 }}>
+            <strong>More levels won't do it.</strong> Even at level 50 across the
+            board, {who} only reaches{' '}
+            <strong className="mono">{Math.round(plan.finalFraction * 100)}%</strong>{' '}
+            of this boss's HP.
+          </p>
+          <p className="small muted" style={{ margin: '8px 0 0' }}>
+            This needs better-matched Pokémon or another trainer, not stardust.
+            Check the Best attackers list, and the TMs tab for movesets.
+          </p>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <h2>What would it take?</h2>
+      <div className="card scroll-x">
+        <table className="results-table">
+          <thead>
+            <tr><th>Power up</th><th>Stardust</th><th>Candy</th></tr>
+          </thead>
+          <tbody>
+            {plan.steps.map((s) => (
+              <tr key={`${s.trainerId}-${s.memberIndex}`}>
+                <td>
+                  <div>{speciesName(s.speciesId)} <span className="muted">L{s.fromLevel} → L{s.toLevel}</span></div>
+                  <div className="small muted">{s.trainerName}</div>
+                </td>
+                <td className="mono">{num(s.cost.stardust)}</td>
+                <td className="mono">
+                  {num(s.cost.candy)}
+                  {s.cost.xlCandy > 0 && <div className="small muted">{num(s.cost.xlCandy)} XL</div>}
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td><strong>Total</strong></td>
+              <td className="mono"><strong>{num(plan.total.stardust)}</strong></td>
+              <td className="mono">
+                <strong>{num(plan.total.candy)}</strong>
+                {plan.total.xlCandy > 0 && <div className="small muted">{num(plan.total.xlCandy)} XL</div>}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p className="small muted">
+        Cheapest-first: each row is the power-up that buys the most damage per
+        stardust at that point. You do not need all of it at once — the top rows
+        help most per dust spent.
+        {plan.total.xlCandy > 0 && ' XL candy is listed separately because it is far scarcer than the ordinary kind.'}
+      </p>
+    </>
   );
 }

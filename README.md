@@ -23,6 +23,10 @@ connection to Pokémon GO — your roster is stored on your own device.
 - **TMs** — whether a TM would meaningfully improve anything you own, ranked by
   gain per Elite TM, since that is the scarce resource.
 
+When a raid comes out as a loss, Results also shows what it would cost in
+stardust and candy to turn it into a win — or tells you plainly that levels
+are not the problem.
+
 ## What it deliberately does not do
 
 No login to any Pokémon GO or Niantic account, ever. No automation, no reading
