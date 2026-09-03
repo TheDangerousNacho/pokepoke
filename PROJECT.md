@@ -88,19 +88,30 @@ only and must never be fed to `cpm()`.
 | Type chart, move data | Game Master, with index-order assertions | Solid |
 | Damage formula | Hand calculation on known matchups | Solid |
 | Raid tier constants | Pokebattler `/raids` endpoint | Sourced, not independently confirmed |
-| **Time-step simulation** | **Internal invariants only** | **NOT externally validated** |
+| Time-step simulation | Pokebattler, 18 matchups / 3 bosses | Cross-validated, ~11% optimistic |
 
-The simulation reproduces sensible orderings (super-effective attackers rank
-above resisted ones, shadows out-damage their twins, deeper benches last
-longer) and its absolute DPS numbers are in the right range, but no output has
-been checked against an independent simulator. Treat time-to-win figures as
-indicative, not authoritative.
+Against Pokebattler's `estimator` (trainers needed) across 18 attacker/boss
+matchups, this engine's mean ratio is **0.89** with a range of 0.67-0.95 — we
+consistently say *fewer* trainers are needed than they do.
 
-Why not Pokebattler: their counters endpoint returns aggregates averaged over
-their own attacker pool, using Monte Carlo with randomised boss movesets and a
-dodge model this engine deliberately omits. Matching it exactly would mean
-reimplementing their strategy model. A fair comparison needs either a
-per-attacker endpoint or hand-collected figures from their UI.
+That direction is expected: this engine assumes zero input delay between
+moves, so its DPS is a clean ceiling no real player reaches. **It has not been
+tuned to close the gap** — inventing a delay constant to match someone else's
+simulator would make the agreement meaningless rather than meaningful. The
+bounds in `pokebattler.test.ts` pin the measured behaviour so a future
+regression moves them.
+
+Practical reading: **treat the tool as ~10% optimistic.** If it says a trio
+just barely wins, that is a coin flip, not a plan. A comfortable margin is
+real. The frailest attackers diverge most (Blacephalon vs Regice sits at 0.67
+with 14 faints) because our flat 10s relobby is cruder than their per-faint
+modelling.
+
+Fixtures live in `src/engine/__tests__/fixtures/pokebattler.json`, pulled from
+`fight.pokebattler.com/raids/defenders/{boss}/...`. The per-counter data is
+nested under `attackers[0].randomMove.defenders[]` — confusingly, "defenders"
+there means the attackers. Free, no account needed, but only for bosses
+currently in rotation.
 
 ### Known simplifications (all bias toward underestimating the player)
 
@@ -131,9 +142,10 @@ attackers).
 
 ## Outstanding inputs
 
-1. **Pokebattler fixtures** — hand-collected from their UI (boss + attacker +
-   moveset + reported DPS/TDO/estimator) to turn the simulation row above from
-   "not validated" into a real test.
+None blocking. The fixture set only covers tier 5, because that is what was in
+rotation when it was collected — worth extending to a tier 1 and a tier 3 boss
+at some point, since those use different `bossCpm` values that nothing
+currently exercises against an external reference.
 
 ## Phases
 

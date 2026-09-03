@@ -1,0 +1,190 @@
+{
+  "source": "https://fight.pokebattler.com/raids/defenders/{boss}/levels/RAID_LEVEL_5/...",
+  "fetchedAt": "2026-09-02",
+  "attackerLevel": 40,
+  "ivs": "15/15/15",
+  "weather": "NO_WEATHER",
+  "notes": "Pokebattler Monte Carlo with randomised boss moveset and their dodge model. Not a no-dodge baseline.",
+  "fixtures": [
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "KELDEO",
+      "fastMove": "LOW_KICK_FAST",
+      "chargedMove": "SECRET_SWORD",
+      "estimator": 2.5378,
+      "edps": 19.421,
+      "tdo": 177.0
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "KELDEO",
+      "fastMove": "POISON_JAB_FAST",
+      "chargedMove": "SECRET_SWORD",
+      "estimator": 3.0223,
+      "edps": 16.306,
+      "tdo": 177.0
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "RESHIRAM",
+      "fastMove": "FIRE_FANG_FAST",
+      "chargedMove": "FUSION_FLARE",
+      "estimator": 3.0624,
+      "edps": 16.017,
+      "tdo": 173.0
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "KELDEO",
+      "fastMove": "LOW_KICK_FAST",
+      "chargedMove": "SACRED_SWORD",
+      "estimator": 3.0957,
+      "edps": 15.903,
+      "tdo": 177.0
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "METAGROSS",
+      "fastMove": "BULLET_PUNCH_FAST",
+      "chargedMove": "METEOR_MASH",
+      "estimator": 3.2903,
+      "edps": 15.02,
+      "tdo": 162.0
+    },
+    {
+      "boss": "REGICE",
+      "tier": "5",
+      "attacker": "BLACEPHALON",
+      "fastMove": "INCINERATE_FAST",
+      "chargedMove": "MIND_BLOWN",
+      "estimator": 3.3076,
+      "edps": 16.069,
+      "tdo": 124.0
+    },
+    {
+      "boss": "REGIROCK",
+      "tier": "5",
+      "attacker": "KELDEO",
+      "fastMove": "LOW_KICK_FAST",
+      "chargedMove": "SECRET_SWORD",
+      "estimator": 2.5654,
+      "edps": 19.31,
+      "tdo": 177.0
+    },
+    {
+      "boss": "REGIROCK",
+      "tier": "5",
+      "attacker": "GROUDON",
+      "fastMove": "MUD_SHOT_FAST",
+      "chargedMove": "PRECIPICE_BLADES",
+      "estimator": 3.1188,
+      "edps": 15.783,
+      "tdo": 173.0
+    },
+    {
+      "boss": "REGIROCK",
+      "tier": "5",
+      "attacker": "KELDEO",
+      "fastMove": "LOW_KICK_FAST",
+      "chargedMove": "SACRED_SWORD",
+      "estimator": 3.1189,
+      "edps": 15.825,
+      "tdo": 177.0
+    },
+    {
+      "boss": "REGIROCK",
+      "tier": "5",
+      "attacker": "METAGROSS",
+      "fastMove": "BULLET_PUNCH_FAST",
+      "chargedMove": "METEOR_MASH",
+      "estimator": 3.1733,
+      "edps": 15.532,
+      "tdo": 162.0
+    },
+    {
+      "boss": "REGIROCK",
+      "tier": "5",
+      "attacker": "KELDEO",
+      "fastMove": "POISON_JAB_FAST",
+      "chargedMove": "SECRET_SWORD",
+      "estimator": 3.2822,
+      "edps": 15.031,
+      "tdo": 177.0
+    },
+    {
+      "boss": "REGIROCK",
+      "tier": "5",
+      "attacker": "METAGROSS",
+      "fastMove": "FURY_CUTTER_FAST",
+      "chargedMove": "METEOR_MASH",
+      "estimator": 3.3037,
+      "edps": 14.931,
+      "tdo": 162.0
+    },
+    {
+      "boss": "REGISTEEL",
+      "tier": "5",
+      "attacker": "BLACEPHALON",
+      "fastMove": "INCINERATE_FAST",
+      "chargedMove": "MIND_BLOWN",
+      "estimator": 2.2909,
+      "edps": 21.706,
+      "tdo": 124.0
+    },
+    {
+      "boss": "REGISTEEL",
+      "tier": "5",
+      "attacker": "KELDEO",
+      "fastMove": "LOW_KICK_FAST",
+      "chargedMove": "SECRET_SWORD",
+      "estimator": 2.3442,
+      "edps": 21.113,
+      "tdo": 177.0
+    },
+    {
+      "boss": "REGISTEEL",
+      "tier": "5",
+      "attacker": "BLACEPHALON",
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "MIND_BLOWN",
+      "estimator": 2.3817,
+      "edps": 20.839,
+      "tdo": 124.0
+    },
+    {
+      "boss": "REGISTEEL",
+      "tier": "5",
+      "attacker": "RESHIRAM",
+      "fastMove": "FIRE_FANG_FAST",
+      "chargedMove": "FUSION_FLARE",
+      "estimator": 2.6373,
+      "edps": 18.749,
+      "tdo": 173.0
+    },
+    {
+      "boss": "REGISTEEL",
+      "tier": "5",
+      "attacker": "LUCARIO",
+      "fastMove": "FORCE_PALM_FAST",
+      "chargedMove": "AURA_SPHERE",
+      "estimator": 2.7545,
+      "edps": 17.928,
+      "tdo": 147.0
+    },
+    {
+      "boss": "REGISTEEL",
+      "tier": "5",
+      "attacker": "BLACEPHALON",
+      "fastMove": "INCINERATE_FAST",
+      "chargedMove": "MYSTICAL_FIRE",
+      "estimator": 2.7735,
+      "edps": 17.894,
+      "tdo": 124.0
+    }
+  ]
+}
