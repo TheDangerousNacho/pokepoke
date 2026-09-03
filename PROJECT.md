@@ -291,6 +291,38 @@ no login, works on any platform.
 - Nothing is saved without review. Rows show why they might be wrong:
   uncertain name match, a CP the species cannot reach, the assumed level.
 
+### Scan reliability, second pass
+
+Three changes after the first tuning round stopped paying off:
+
+- **The CP crop is no longer a single fixed window.** It was tuned to one
+  phone (top 3-14%, middle 22-78%). A different aspect ratio, notch, or a
+  cropped screenshot moves CP outside it, and that fails hard rather than
+  degrading. Four candidate regions are tried, ending as soon as one produces
+  a reading the HP agrees with — so the common case still costs one region.
+- **CP readings are now candidates, arbitrated by HP.** Passes over one image
+  produce 2055 beside 2855, and 2563 beside 2583; taking the first that parsed
+  was a coin flip. `chooseCp` picks the reading that some level and IV spread
+  can reconcile with the scanned HP.
+- **Only numbers next to a "CP" label are candidates at all.** Accepting loose
+  digits is how the status bar clock became a CP of 716, and the HP check
+  cannot be relied on to catch that — see the limitation below.
+
+**The HP oracle's resolution is about ±10%** (measured: ±255 CP on Skeledirge,
+±400 on Metagross). It reliably rejects the gross errors that actually occur —
+a clock, a truncated digit, an inserted one — but **cannot catch a single wrong
+digit mid-number**. Agreement is not proof, and there is a test pinning that so
+nobody later mistakes it for one.
+
+### Reporting a bad scan
+
+Every scanning fix so far came from being handed real screenshots, so the
+review screen has a **"Something wrong? Save a report"** button. It downloads
+one file containing the image, every OCR pass verbatim, what the scanner
+concluded, and the device's screen shape — since the crop regions are fractions
+of the image, screen shape is often the explanation. Entirely local; nothing is
+sent anywhere.
+
 **Measured against five real screenshots** (kept in `test-screenshots/`,
 gitignored). Current accuracy: species 5/5, HP 5/5, CP 4/5 — and the fifth is
 detected as wrong rather than silently accepted.

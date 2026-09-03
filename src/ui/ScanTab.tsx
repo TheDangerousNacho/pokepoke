@@ -19,6 +19,8 @@ interface Draft {
   id: number;
   file: string;
   previewUrl: string;
+  /** Kept so a bad scan can be reported with the image that caused it. */
+  source: File | null;
   speciesId: string | null;
   cp: number | null;
   hp: number | null;
@@ -37,13 +39,14 @@ interface Draft {
   include: boolean;
 }
 
-function toDraft(r: ScanResult, id: number): Draft {
+function toDraft(r: ScanResult, id: number, source: File | null): Draft {
   const named = r.matches.slice(0, 5).map((m) => m.species.id);
   const fromStats = named.length === 0 && r.statsCandidates.length > 0;
   return {
     id,
     file: r.file,
     previewUrl: r.previewUrl,
+    source,
     speciesId: r.speciesId,
     cp: r.cp,
     hp: r.hp,
@@ -94,7 +97,10 @@ export function ScanTab({ onImport }: Props) {
       const results = await scanScreenshots(files, (p) =>
         setBusy(`${p.file}: ${p.status}…`),
       );
-      setDrafts((prev) => [...prev, ...results.map((r, i) => toDraft(r, Date.now() + i))]);
+      setDrafts((prev) => [
+        ...prev,
+        ...results.map((r, i) => toDraft(r, Date.now() + i, files[i] ?? null)),
+      ]);
     } catch (e) {
       setError(
         e instanceof Error
@@ -232,6 +238,13 @@ export function ScanTab({ onImport }: Props) {
 
               <Warnings draft={d} />
               <Diagnostics draft={d} />
+              <button
+                className="ghost small"
+                style={{ marginTop: 6, padding: '4px 0' }}
+                onClick={() => void downloadReport(d)}
+              >
+                Something wrong? Save a report
+              </button>
 
               {pickingFor === d.id && (
                 <SpeciesPicker
@@ -248,6 +261,62 @@ export function ScanTab({ onImport }: Props) {
       )}
     </>
   );
+}
+
+/**
+ * Bundles everything needed to reproduce a bad scan into one file.
+ *
+ * Every scanning fix so far came from being handed real screenshots. Without
+ * this the loop requires noticing, screenshotting and describing the problem;
+ * with it, a wrong row is one tap away from a report that contains the image,
+ * every OCR pass verbatim, and what was concluded.
+ *
+ * Entirely local — it downloads a file. Nothing is sent anywhere.
+ */
+async function downloadReport(draft: Draft) {
+  const image = draft.source
+    ? await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(draft.source!);
+      })
+    : '';
+
+  const report = {
+    reportedAt: new Date().toISOString(),
+    file: draft.file,
+    // What the scanner concluded, so a report shows the mistake, not just input.
+    read: {
+      speciesId: draft.speciesId,
+      nameText: draft.nameText,
+      cp: draft.cp,
+      hp: draft.hp,
+      types: draft.types,
+      familyId: draft.familyId,
+      upgradeCost: draft.upgradeCost,
+      levelBand: draft.levelBand,
+      alternatives: draft.alternatives,
+    },
+    ocrPasses: draft.debug,
+    // Layout varies by device and the crop regions are fractions of the image,
+    // so screen shape is often the explanation.
+    device: {
+      userAgent: navigator.userAgent,
+      screen: `${window.screen.width}x${window.screen.height}`,
+      pixelRatio: window.devicePixelRatio,
+    },
+    image,
+  };
+
+  const url = URL.createObjectURL(
+    new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' }),
+  );
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `pokepoke-scan-report-${draft.file.replace(/\.[^.]+$/, '')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 /**

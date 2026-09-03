@@ -11,8 +11,12 @@
 export interface Prepared {
   /** The whole screenshot, upscaled if small. Used for name, types and HP. */
   full: string;
-  /** Renderings of the CP band at the top, in the order worth trying. */
-  cpBand: string[];
+  /**
+   * Candidate CP regions, each with several renderings, ordered by how likely
+   * the region is. The caller tries a whole band, and only moves to the next
+   * if nothing it read holds up — so the common case still costs one band.
+   */
+  cpBands: string[][];
   /**
    * The lower half at higher resolution. The power-up cost and the candy
    * labels live here in small text that the full-page pass reads poorly, and
@@ -28,19 +32,26 @@ export interface Prepared {
 const MIN_WIDTH = 1000;
 
 /**
- * Where CP sits on the detail screen.
+ * Where CP might sit on the detail screen.
  *
  * Cropped horizontally as well as vertically, which matters more than it
  * sounds: CP is centred, while the phone's status bar puts a clock on the left
- * and battery/signal icons on the right. Reading the full width let the clock
- * ("7:16") be picked up as a CP of 716. Keeping only the middle band removes
- * that whole class of error regardless of where the status bar sits, which
- * varies by device.
+ * and battery icons on the right. Reading the full width let the clock
+ * ("7:16") be picked up as a CP of 716. Keeping the middle removes that whole
+ * class of error regardless of where the status bar sits.
+ *
+ * Several vertical offsets, because the first entry is tuned to one phone.
+ * A different aspect ratio, a different notch, or a screenshot someone cropped
+ * moves CP out of a single fixed window entirely — and it would fail hard
+ * rather than degrade. The last entry is deliberately wide and tall as a
+ * catch-all for a layout none of the others fit.
  */
-const CP_BAND_TOP = 0.03;
-const CP_BAND_HEIGHT = 0.11;
-const CP_BAND_LEFT = 0.22;
-const CP_BAND_WIDTH = 0.56;
+const CP_REGIONS = [
+  { left: 0.22, top: 0.03, width: 0.56, height: 0.11 },
+  { left: 0.20, top: 0.06, width: 0.60, height: 0.12 },
+  { left: 0.20, top: 0.00, width: 0.60, height: 0.09 },
+  { left: 0.12, top: 0.02, width: 0.76, height: 0.20 },
+];
 
 const DETAIL_BAND_TOP = 0.42;
 const DETAIL_BAND_HEIGHT = 0.48;
@@ -148,11 +159,20 @@ export async function prepareImage(file: File): Promise<Prepared> {
 
     // The band is small, so upscale it hard — OCR of a few large digits is
     // cheap and accuracy improves a lot with resolution.
-    const band = crop(
-      full,
-      { left: CP_BAND_LEFT, top: CP_BAND_TOP, width: CP_BAND_WIDTH, height: CP_BAND_HEIGHT },
-      3,
-    );
+    const cpBands = CP_REGIONS.map((region) => {
+      const band = crop(full, region, 3);
+      return [
+        // Percentile cutoffs first: they adapt to the image, which fixed values
+        // cannot do for white CP text over a bright sky. Fixed cutoffs stay as
+        // backstops, occasionally better on flat backgrounds.
+        threshold(band, percentileLuma(band, 0.93), true),
+        threshold(band, percentileLuma(band, 0.86), true),
+        threshold(band, percentileLuma(band, 0.97), true),
+        threshold(band, 225, true),
+        threshold(band, percentileLuma(band, 0.08), false),
+        band.toDataURL('image/png'),
+      ];
+    });
 
     const detail = crop(
       full,
@@ -163,18 +183,7 @@ export async function prepareImage(file: File): Promise<Prepared> {
     return {
       full: full.toDataURL('image/png'),
       detailBand: detail.toDataURL('image/png'),
-      // Percentile cutoffs first: they adapt to the image, which fixed values
-      // cannot do for white CP text over a bright sky. Fixed cutoffs stay as
-      // backstops, cheap to try and occasionally better on flat backgrounds.
-      cpBand: [
-        threshold(band, percentileLuma(band, 0.93), true),
-        threshold(band, percentileLuma(band, 0.86), true),
-        threshold(band, percentileLuma(band, 0.97), true),
-        threshold(band, 225, true),
-        threshold(band, 170, true),
-        threshold(band, percentileLuma(band, 0.08), false),
-        band.toDataURL('image/png'),
-      ],
+      cpBands,
       width: full.width,
       height: full.height,
     };
