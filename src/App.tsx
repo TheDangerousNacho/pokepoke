@@ -104,7 +104,14 @@ export default function App() {
         />
       )}
 
-      {tab === 'results' && <Results boss={boss} roster={profile.roster} conditions={conditions} />}
+      {tab === 'results' && (
+        <Results
+          boss={boss}
+          profiles={store.profiles}
+          activeProfileId={profile.id}
+          conditions={conditions}
+        />
+      )}
 
       {tab === 'upgrades' && (
         <Upgrades roster={profile.roster} selectedBoss={boss} conditions={conditions} />

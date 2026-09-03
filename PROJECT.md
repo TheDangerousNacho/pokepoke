@@ -135,7 +135,8 @@ currently in rotation.
 - No dodging; every boss hit lands in full.
 - Boss acts on a fixed cycle, not the client's randomised timing.
 - Both sides fire charged moves the instant energy allows.
-- Group size = N identical copies of one party's damage curve.
+- Where only one trainer profile is selected, group size is still N identical
+  copies of that party — "could three people like me do this".
 - No input delay between moves, so DPS is a clean ceiling. An earlier 500ms
   default was removed: as a flat per-move cost it halved the output of 1000ms
   fast moves, which is not a realistic penalty.
@@ -268,6 +269,34 @@ Level is chosen as the LOWEST that fits, not the median. Reaching a higher
 level at the same CP requires worse IVs, so the low end is both likelier and
 the safer error — it understates damage rather than promising a win the team
 cannot deliver.
+
+### Multi-trainer lobbies — BUILT
+
+`src/engine/lobby.ts` simulates a raid where each trainer brings their own
+Pokémon, replacing the assumption that everyone brings a copy of yours.
+
+That assumption was the largest remaining error in the tool. For a household
+with one strong roster and two weaker ones it **overstated damage by about
+1.7x** — bigger than the ~11% Pokebattler gap or the ~7% IV range, and exactly
+the case this was built for. In the app, a boss the old model showed a trio
+reaching 91% of is really 52%.
+
+It was cheap because `simulateParty` already returned a cumulative damage curve
+rather than a verdict — the Phase 1 decision that made solo/duo/trio a division.
+Group size generalised from `N x curve(t)` to `sum of curve_i(t)`.
+
+Design notes:
+
+- **The boss attacks every trainer independently** in Pokémon GO; each client
+  runs its own fight against a shared HP pool. So simulating each party
+  separately and summing is faithful, not a shortcut. This is load-bearing.
+- Curves are event-driven and have samples at different instants, so they are
+  merged as step functions on the union of their times, never by index.
+- **Megas are the one real cross-party interaction**: a mega boosts every
+  attacker in the raid, not just its owner's. `deriveMegaBoostTypes` reads it
+  off the whole lobby, with the manual condition still able to override.
+- Selecting a single trainer keeps the old solo/duo/trio reading, since copying
+  one person is meaningful where copying a mixed household is not.
 
 ### Phase 3 — Move recommendations — BUILT
 
