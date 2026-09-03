@@ -3,7 +3,7 @@ import type { BattleConditions } from '../engine/damage';
 import { identicalLobby, simulateLobby, type LobbyTrainer } from '../engine/lobby';
 import { rankAttackers } from '../engine/simulate';
 import type { RosterEntry } from '../engine/stats';
-import type { TrainerProfile } from '../storage/profiles';
+import { partyMembers, type TrainerProfile } from '../storage/profiles';
 import type { BossListEntry } from './BossPicker';
 import { formatSeconds, moveName, speciesName } from './format';
 
@@ -25,20 +25,31 @@ function bestParty(roster: RosterEntry[], boss: BossListEntry, conditions: Battl
     .filter(Boolean);
 }
 
+/** Sentinel for "let the app pick", as opposed to a saved party's id. */
+const AUTO = 'auto';
+
 export function Results({ boss, profiles, activeProfileId, conditions }: Props) {
   const withRosters = profiles.filter((p) => p.roster.length > 0);
   const [selected, setSelected] = useState<string[]>([activeProfileId]);
+  /** profile id -> saved party id, or AUTO. */
+  const [chosenParty, setChosenParty] = useState<Record<string, string>>({});
 
   const inLobby = withRosters.filter((p) => selected.includes(p.id));
 
   const result = useMemo(() => {
     if (!boss || inLobby.length === 0) return null;
 
-    const parties = inLobby.map((p) => ({
-      id: p.id,
-      name: p.name,
-      party: bestParty(p.roster, boss, conditions),
-    })) satisfies LobbyTrainer[];
+    const parties = inLobby.map((p) => {
+      const choice = chosenParty[p.id] ?? AUTO;
+      const saved = choice === AUTO ? [] : partyMembers(p, choice);
+      // Fall back to the automatic pick if a saved party has been emptied out
+      // by deleting its members, rather than sending someone in with nothing.
+      return {
+        id: p.id,
+        name: p.name,
+        party: saved.length > 0 ? saved : bestParty(p.roster, boss, conditions),
+      };
+    }) satisfies LobbyTrainer[];
 
     // One trainer selected still means "could N people like me do this", so
     // the group estimate is copies of that party. Two or more means a real
@@ -57,7 +68,7 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
       lobby: simulateLobby(parties, boss, { conditions }),
       ranked: rankAttackers(inLobby.flatMap((p) => p.roster), boss, { conditions }),
     };
-  }, [boss, inLobby.map((p) => p.id).join(','), profiles, conditions]);
+  }, [boss, inLobby.map((p) => p.id).join(','), chosenParty, profiles, conditions]);
 
   if (!boss) return <p className="empty">Pick a raid boss first.</p>;
   if (withRosters.length === 0) return <p className="empty">Add some Pokémon to a roster first.</p>;
@@ -72,20 +83,38 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
 
       <h2>Who's raiding?</h2>
       <div className="card">
-        {withRosters.map((p) => (
-          <label key={p.id} className="row" style={{ padding: '6px 0' }}>
-            <input
-              type="checkbox"
-              checked={selected.includes(p.id)}
-              onChange={(e) =>
-                setSelected((s) => (e.target.checked ? [...s, p.id] : s.filter((id) => id !== p.id)))
-              }
-              style={{ width: 18, height: 18 }}
-            />
-            <span className="grow">{p.name}</span>
-            <span className="small muted">{p.roster.length} Pokémon</span>
-          </label>
-        ))}
+        {withRosters.map((p) => {
+          const isIn = selected.includes(p.id);
+          return (
+            <div key={p.id} style={{ padding: '6px 0' }}>
+              <label className="row">
+                <input
+                  type="checkbox"
+                  checked={isIn}
+                  onChange={(e) =>
+                    setSelected((s) => (e.target.checked ? [...s, p.id] : s.filter((id) => id !== p.id)))
+                  }
+                  style={{ width: 18, height: 18 }}
+                />
+                <span className="grow">{p.name}</span>
+                <span className="small muted">{p.roster.length} Pokémon</span>
+              </label>
+              {isIn && p.parties.length > 0 && (
+                <select
+                  style={{ marginTop: 6, width: '100%' }}
+                  aria-label={`${p.name}'s party`}
+                  value={chosenParty[p.id] ?? AUTO}
+                  onChange={(e) => setChosenParty((c) => ({ ...c, [p.id]: e.target.value }))}
+                >
+                  <option value={AUTO}>Best 6 for this boss (automatic)</option>
+                  {p.parties.map((party) => (
+                    <option key={party.id} value={party.id}>{party.name}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+          );
+        })}
         {withRosters.length === 1 && (
           <p className="small muted" style={{ margin: '8px 0 0' }}>
             Only one roster here. Add a profile per family member on the Roster

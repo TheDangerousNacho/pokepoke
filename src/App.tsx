@@ -3,8 +3,12 @@ import './App.css';
 import type { BattleConditions } from './engine/damage';
 import { gm } from './engine/gamemaster';
 import type { WeatherCondition } from './engine/types';
-import { activeProfile, loadStore, saveStore, updateRoster, type ProfileStore } from './storage/profiles';
+import {
+  activeProfile, loadStore, removeParty, saveParty, saveStore, updateRoster,
+  type ProfileStore,
+} from './storage/profiles';
 import { BossPicker, type BossListEntry } from './ui/BossPicker';
+import { PartyManager } from './ui/PartyManager';
 import { ProfileBar } from './ui/ProfileBar';
 import { Results } from './ui/Results';
 import { RosterEditor } from './ui/RosterEditor';
@@ -88,6 +92,11 @@ export default function App() {
       {tab === 'roster' && (
         <>
           <ProfileBar store={store} onChange={setStore} />
+          <PartyManager
+            profile={profile}
+            onSave={(party) => setStore(saveParty(store, profile.id, party))}
+            onDelete={(partyId) => setStore(removeParty(store, profile.id, partyId))}
+          />
           <RosterEditor
             roster={profile.roster}
             onChange={(roster) => setStore(updateRoster(store, profile.id, roster))}

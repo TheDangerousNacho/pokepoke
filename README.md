@@ -14,10 +14,12 @@ connection to Pokémon GO — your roster is stored on your own device.
 
 - **Boss** — pick from the current raid rotation, set weather and friendship.
 - **Roster** — enter your Pokémon once; they are saved on that device. Several
-  trainer profiles, with JSON export/import to move them between phones.
+  trainer profiles, with JSON export/import to move them between phones. Save
+  named parties to override the automatic team pick.
 - **Scan** — upload screenshots of a Pokémon's detail screen and it reads the
   species, CP and HP off them, with a review step before anything is saved.
-- **Results** — ranked attackers, and whether 1, 2 or 3 trainers can win.
+- **Results** — pick who is raiding and each person's party; get ranked
+  attackers, whether the lobby wins, and who is pulling their weight.
 - **TMs** — whether a TM would meaningfully improve anything you own, ranked by
   gain per Elite TM, since that is the scarce resource.
 

@@ -270,6 +270,27 @@ level at the same CP requires worse IVs, so the low end is both likelier and
 the safer error — it understates damage rather than promising a win the team
 cannot deliver.
 
+### Saved parties — BUILT
+
+Named parties per trainer profile, chosen per person in the lobby instead of
+the automatic best six.
+
+The automatic pick is usually right, so these are an override rather than a
+replacement — for a team you know works, one you are levelling, or the six you
+actually have revives for. In testing, a saved party that simply left out a
+Magikarp beat the automatic pick, which had padded the party with it and lost
+time to the faint.
+
+Required giving roster entries stable ids (`StoredPokemon extends RosterEntry`).
+Referring to members by array index would silently change a party's contents
+the moment something earlier in the roster was deleted. The engine's
+`RosterEntry` stays id-free: it is a battle input, not a record.
+
+Storage migrates v1 to v2 on read — ids are minted for existing Pokémon and an
+empty party list added. The parser is deliberately forgiving: it would be far
+worse to lose an accumulated roster to a schema quibble than to carry an odd
+record. Deleting a Pokémon removes it from every party that referenced it.
+
 ### Multi-trainer lobbies — BUILT
 
 `src/engine/lobby.ts` simulates a raid where each trainer brings their own

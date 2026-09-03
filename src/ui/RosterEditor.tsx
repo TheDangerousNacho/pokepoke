@@ -3,24 +3,26 @@ import { getSpecies } from '../engine/gamemaster';
 import { bestMoveset } from '../engine/moveset';
 import { combatPower } from '../engine/cpm';
 import type { RosterEntry } from '../engine/stats';
+import { newId, type StoredPokemon } from '../storage/profiles';
 import { megaName, moveName, speciesName } from './format';
 import { SpeciesPicker } from './SpeciesPicker';
 
 interface Props {
-  roster: RosterEntry[];
-  onChange: (roster: RosterEntry[]) => void;
+  roster: StoredPokemon[];
+  onChange: (roster: StoredPokemon[]) => void;
 }
 
 const LEVELS = Array.from({ length: 99 }, (_, i) => 1 + i * 0.5);
 const IVS = Array.from({ length: 16 }, (_, i) => i);
 
-function defaultEntry(speciesId: string): RosterEntry {
+function defaultEntry(speciesId: string): StoredPokemon {
   const s = getSpecies(speciesId);
   // Default to the species' best non-elite attacking moveset rather than
   // whatever the Game Master happens to list first — that would have given
   // Metagross "Psychic" over "Meteor Mash" and understated the team badly.
   const best = bestMoveset(speciesId);
   return {
+    id: newId('m'),
     speciesId,
     level: 40,
     ivs: { attack: 15, defense: 15, stamina: 15 },
@@ -30,8 +32,8 @@ function defaultEntry(speciesId: string): RosterEntry {
 }
 
 function EntryCard({ entry, onChange, onRemove }: {
-  entry: RosterEntry;
-  onChange: (e: RosterEntry) => void;
+  entry: StoredPokemon;
+  onChange: (e: StoredPokemon) => void;
   onRemove: () => void;
 }) {
   const species = getSpecies(entry.speciesId);
@@ -41,7 +43,7 @@ function EntryCard({ entry, onChange, onRemove }: {
   const chargedMoves = [...species.chargedMoves, ...species.eliteChargedMoves];
   const cp = combatPower(species, entry.ivs, entry.level);
 
-  const set = (patch: Partial<RosterEntry>) => onChange({ ...entry, ...patch });
+  const set = (patch: Partial<StoredPokemon>) => onChange({ ...entry, ...patch });
   const setIv = (k: keyof RosterEntry['ivs'], v: number) =>
     onChange({ ...entry, ivs: { ...entry.ivs, [k]: v } });
 
@@ -147,7 +149,7 @@ export function RosterEditor({ roster, onChange }: Props) {
 
       {roster.map((entry, i) => (
         <EntryCard
-          key={`${entry.speciesId}-${i}`}
+          key={entry.id}
           entry={entry}
           onChange={(next) => onChange(roster.map((e, j) => (j === i ? next : e)))}
           onRemove={() => onChange(roster.filter((_, j) => j !== i))}

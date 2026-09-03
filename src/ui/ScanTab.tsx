@@ -3,7 +3,7 @@ import { isPlausibleCp } from '../engine/estimateLevel';
 import { reconcile } from '../scan/reconcile';
 import { bestMoveset } from '../engine/moveset';
 import { getSpecies } from '../engine/gamemaster';
-import type { RosterEntry } from '../engine/stats';
+import { newId, type StoredPokemon } from '../storage/profiles';
 import { CONFIDENT_MATCH } from '../scan/parse';
 import { matchSpeciesName } from '../scan/match';
 import type { ScanResult } from '../scan/ocr';
@@ -11,7 +11,7 @@ import { speciesName } from './format';
 import { SpeciesPicker } from './SpeciesPicker';
 
 interface Props {
-  onImport: (entries: RosterEntry[]) => void;
+  onImport: (entries: StoredPokemon[]) => void;
 }
 
 /** One row of the review screen: a scan the user can correct before saving. */
@@ -59,7 +59,7 @@ function toDraft(r: ScanResult, id: number): Draft {
   };
 }
 
-function draftToEntry(d: Draft): RosterEntry | null {
+function draftToEntry(d: Draft): StoredPokemon | null {
   if (!d.speciesId || d.cp === null) return null;
   // Prefer the reconciled level: HP is read far more reliably than CP, so it
   // corrects a mangled CP rather than inheriting its error.
@@ -67,6 +67,7 @@ function draftToEntry(d: Draft): RosterEntry | null {
   const best = bestMoveset(d.speciesId);
   const species = getSpecies(d.speciesId);
   return {
+    id: newId('m'),
     speciesId: d.speciesId,
     level,
     // A scan cannot see IVs. 12/12/12 is nearer a typical caught Pokémon than
@@ -109,7 +110,7 @@ export function ScanTab({ onImport }: Props) {
     setDrafts((ds) => ds.map((d) => (d.id === id ? { ...d, ...patch } : d)));
 
   const commit = () => {
-    const entries = drafts.filter((d) => d.include).map(draftToEntry).filter((e): e is RosterEntry => e !== null);
+    const entries = drafts.filter((d) => d.include).map(draftToEntry).filter((e): e is StoredPokemon => e !== null);
     if (entries.length === 0) return;
     onImport(entries);
     for (const d of drafts) URL.revokeObjectURL(d.previewUrl);
