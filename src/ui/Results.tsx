@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { useDeferredCompute } from './useDeferredCompute';
 import type { BattleConditions } from '../engine/damage';
 import { identicalLobby, simulateLobby, type LobbyTrainer } from '../engine/lobby';
 import { planPowerUps, type PowerUpPlan } from '../engine/leveling';
@@ -37,7 +38,7 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
 
   const inLobby = withRosters.filter((p) => selected.includes(p.id));
 
-  const result = useMemo(() => {
+  const { value: result, pending } = useDeferredCompute(() => {
     if (!boss || inLobby.length === 0) return null;
 
     const parties = inLobby.map((p) => {
@@ -137,11 +138,16 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
         )}
       </div>
 
-      {!result || inLobby.length === 0 ? (
+      {inLobby.length === 0 ? (
         <p className="empty">Select at least one trainer.</p>
+      ) : !result ? (
+        <p className="empty">Working out the fight…</p>
       ) : (
         <>
-          <h2>Can we beat {speciesName(boss.speciesId)}?</h2>
+          <h2>
+            Can we beat {speciesName(boss.speciesId)}?
+            {pending && <span className="small muted"> · updating…</span>}
+          </h2>
 
           {result.groupEstimates ? (
             <>
@@ -162,14 +168,12 @@ export function Results({ boss, profiles, activeProfileId, conditions }: Props) 
             </>
           ) : (
             <>
-              <div className="card verdict">
-                <Verdict
-                  label={`${result.parties.length} trainers`}
-                  won={result.lobby.won}
-                  timeToWinMs={result.lobby.timeToWinMs}
-                  fraction={result.lobby.bossHpFraction}
-                />
-              </div>
+              <HeroVerdict
+                label={`${result.parties.length} trainers`}
+                won={result.lobby.won}
+                timeToWinMs={result.lobby.timeToWinMs}
+                fraction={result.lobby.bossHpFraction}
+              />
               <h2>Who's pulling their weight</h2>
               <div className="card scroll-x">
                 <table className="results-table">
@@ -331,5 +335,28 @@ function PowerUpAdvice({ plan, trio }: { plan: PowerUpPlan; trio: boolean }) {
         {plan.total.xlCandy > 0 && ' XL candy is listed separately because it is far scarcer than the ordinary kind.'}
       </p>
     </>
+  );
+}
+
+/**
+ * The verdict, given the weight it deserves.
+ *
+ * This is the answer to the question the whole app exists to ask, and it used
+ * to render as one more table row among several. The number is the headline;
+ * everything else on the page is supporting detail.
+ */
+function HeroVerdict({ label, won, timeToWinMs, fraction }: {
+  label: string; won: boolean; timeToWinMs: number | null; fraction: number;
+}) {
+  return (
+    <div className={`hero ${won ? 'win' : 'lose'}`}>
+      <div className="hero-figure mono">
+        {won ? formatSeconds(timeToWinMs!) : `${Math.round(fraction * 100)}%`}
+      </div>
+      <div className="hero-caption">
+        {won ? `${label} win with time to spare` : `${label} get it to ${Math.round(fraction * 100)}% of its HP`}
+      </div>
+      <div className="bar"><span style={{ width: `${Math.round(fraction * 100)}%` }} /></div>
+    </div>
   );
 }

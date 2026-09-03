@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { searchSpecies } from './search';
+import { TypeChip } from './TypeChip';
 
 interface Props {
   onPick: (speciesId: string) => void;
@@ -34,7 +35,7 @@ export function SpeciesPicker({ onPick, onCancel }: Props) {
                 <span>{s.name}</span>
                 <span className="types">
                   {s.types.map((t) => (
-                    <span className="type" key={t}>{t}</span>
+                    <TypeChip key={t} type={t} />
                   ))}
                 </span>
               </span>

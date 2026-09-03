@@ -199,6 +199,31 @@ current state is the freshest version that exists.
 **Deployment needs a Cloudflare account and `wrangler login`**, so it is not
 wired up — see `worker/README.md` for the four commands.
 
+## Visual design
+
+Deliberately restrained — the simplicity is a feature, so this is four changes
+rather than a redesign. No sprites (external images break offline and add real
+weight), no animation, no theme settings. Light and dark both work off
+`prefers-color-scheme` and were checked.
+
+- **Type chips carry the community-standard type colours.** Players read these
+  faster than they read the words. Black-or-white text is derived per colour
+  from WCAG relative luminance rather than hand-listed, because several sit
+  near the boundary and a second hand-maintained column would drift.
+- **The verdict is the hero.** It is the answer the app exists to give and was
+  rendering as one more row among several; it now leads with the figure.
+- **Heavy computation is deferred so the page can paint.** `useDeferredCompute`
+  runs the simulations after a paint and keeps the previous result visible
+  while recomputing, since blanking the screen reads as breakage even when it
+  is faster.
+- **The tab bar has icons**, inline SVG using `currentColor`. Five text labels
+  at 375px was tight, and an icon font or sprite sheet would be a dependency
+  and a request for five shapes that must work offline.
+
+`useDeferredCompute` uses a timer, **not** `requestAnimationFrame`: rAF does not
+fire while a page is hidden or backgrounded, so the first version left the
+screen on "working…" forever in a hidden tab.
+
 ## Recovering from mistakes
 
 **Error boundary.** A render error used to leave a blank page. On a phone that

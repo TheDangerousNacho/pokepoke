@@ -11,6 +11,7 @@ import { BossPicker, type BossListEntry } from './ui/BossPicker';
 import { PartyManager } from './ui/PartyManager';
 import { ProfileBar } from './ui/ProfileBar';
 import { SyncPanel } from './ui/SyncPanel';
+import { TabIcon } from './ui/TabIcon';
 import { Results } from './ui/Results';
 import { RosterEditor } from './ui/RosterEditor';
 import { ScanTab } from './ui/ScanTab';
@@ -176,7 +177,8 @@ export default function App() {
       <nav className="tabs">
         {([['boss', 'Boss'], ['roster', 'Roster'], ['scan', 'Scan'], ['results', 'Results'], ['upgrades', 'TMs']] as const).map(([id, label]) => (
           <button key={id} aria-current={tab === id} onClick={() => setTab(id)}>
-            {label}
+            <TabIcon name={id} />
+            <span>{label}</span>
           </button>
         ))}
       </nav>

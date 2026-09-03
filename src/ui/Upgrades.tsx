@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useDeferredCompute } from './useDeferredCompute';
 import type { BattleConditions } from '../engine/damage';
 import type { RaidBossSpec, RosterEntry } from '../engine/stats';
 import { rankUpgrades, type MoveUpgrade } from '../engine/upgrades';
@@ -26,7 +27,7 @@ export function Upgrades({ roster, selectedBoss, conditions }: Props) {
     return (hard.length > 0 ? hard : BOSSES) as RaidBossSpec[];
   }, [target, selectedBoss]);
 
-  const upgrades = useMemo(
+  const { value: upgrades, pending } = useDeferredCompute(
     () => (roster.length > 0 && bosses.length > 0 ? rankUpgrades(roster, bosses, { conditions }) : []),
     [roster, bosses, conditions],
   );
@@ -37,7 +38,7 @@ export function Upgrades({ roster, selectedBoss, conditions }: Props) {
 
   return (
     <>
-      <h2>Worth a TM?</h2>
+      <h2>Worth a TM?{pending && <span className="small muted"> · updating…</span>}</h2>
       <div className="card">
         <div className="field">
           <label htmlFor="target">Rate against</label>
@@ -56,7 +57,9 @@ export function Upgrades({ roster, selectedBoss, conditions }: Props) {
         </p>
       </div>
 
-      {upgrades.length === 0 ? (
+      {!upgrades ? (
+        <p className="empty">Checking every moveset…</p>
+      ) : upgrades.length === 0 ? (
         <p className="empty">
           Nothing worth a TM right now — every Pokémon here is within a few
           percent of its best moveset against these bosses.

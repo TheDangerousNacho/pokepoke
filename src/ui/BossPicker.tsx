@@ -3,6 +3,7 @@ import { getSpecies } from '../engine/gamemaster';
 import { getTier, type RaidTier } from '../engine/raidTiers';
 import type { RaidBossSpec } from '../engine/stats';
 import { moveName, speciesName } from './format';
+import { TypeChip } from './TypeChip';
 
 export interface BossListEntry extends RaidBossSpec {
   shiny?: boolean;
@@ -59,7 +60,7 @@ export function BossPicker({ selected, onSelect, onChangeMoves }: Props) {
                   <strong>{speciesName(b.speciesId)}</strong>
                   <span className="types" style={{ marginTop: 4 }}>
                     {getSpecies(b.speciesId).types.map((t) => (
-                      <span className="type" key={t}>{t}</span>
+                      <TypeChip key={t} type={t} />
                     ))}
                   </span>
                 </span>
