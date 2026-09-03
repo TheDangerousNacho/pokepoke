@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "build:gm": "node scripts/build-gamemaster.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "fetch:bosses": "node scripts/fetch-bosses.mjs"
+    "fetch:bosses": "node scripts/fetch-bosses.mjs",
+    "make:icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

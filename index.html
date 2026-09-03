@@ -2,9 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Raid Planner</title>
+    <meta name="description" content="Work out the best team for a Pokémon GO raid boss, and whether you can beat it solo, duo or trio." />
+
+    <!-- Relative hrefs so the same build works at a subpath (GitHub Pages
+         serves this from /pokepoke/) without hardcoding it twice. -->
+    <link rel="icon" type="image/png" href="./icon-192.png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+
+    <!-- Matches the dark palette so the iOS status bar does not sit on a white
+         strip when launched from the home screen. -->
+    <meta name="theme-color" content="#2f6fed" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Raid Planner" />
   </head>
   <body>
     <div id="root"></div>
