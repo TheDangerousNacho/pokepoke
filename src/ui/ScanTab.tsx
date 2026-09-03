@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
-import { estimateLevel, isPlausibleCp } from '../engine/estimateLevel';
+import { isPlausibleCp } from '../engine/estimateLevel';
+import { reconcile } from '../scan/reconcile';
 import { bestMoveset } from '../engine/moveset';
 import { getSpecies } from '../engine/gamemaster';
 import type { RosterEntry } from '../engine/stats';
@@ -25,6 +26,8 @@ interface Draft {
   alternatives: string[];
   nameText: string | null;
   types: string[];
+  /** Family read off the candy label, e.g. FAMILY_EEVEE. */
+  familyId: string | null;
   /** True when the shortlist came from CP/HP because no name matched. */
   fromStats: boolean;
   debug: { pass: string; text: string }[];
@@ -44,6 +47,7 @@ function toDraft(r: ScanResult, id: number): Draft {
     alternatives: fromStats ? r.statsCandidates.map((c) => c.speciesId) : named,
     nameText: r.nameText,
     types: r.types,
+    familyId: r.familyId,
     fromStats,
     debug: r.debug,
     include: r.speciesId !== null && r.cp !== null,
@@ -52,7 +56,9 @@ function toDraft(r: ScanResult, id: number): Draft {
 
 function draftToEntry(d: Draft): RosterEntry | null {
   if (!d.speciesId || d.cp === null) return null;
-  const { level } = estimateLevel(d.speciesId, d.cp);
+  // Prefer the reconciled level: HP is read far more reliably than CP, so it
+  // corrects a mangled CP rather than inheriting its error.
+  const level = reconcile(d.speciesId, d.cp, d.hp).level ?? 1;
   const best = bestMoveset(d.speciesId);
   const species = getSpecies(d.speciesId);
   return {
@@ -247,6 +253,11 @@ function Diagnostics({ draft }: { draft: Draft }) {
       <summary className="small muted" style={{ cursor: 'pointer' }}>
         What the scanner read
       </summary>
+      {draft.familyId && (
+        <p className="small muted" style={{ margin: '6px 0 0' }}>
+          Candy family: {draft.familyId.replace('FAMILY_', '')}
+        </p>
+      )}
       {draft.types.length > 0 && (
         <p className="small muted" style={{ margin: '6px 0 0' }}>
           Types detected: {draft.types.join(', ')}
@@ -281,11 +292,20 @@ function Warnings({ draft }: { draft: Draft }) {
   if (draft.speciesId && draft.cp !== null && !isPlausibleCp(draft.speciesId, draft.cp)) {
     notes.push(`CP ${draft.cp} is impossible for ${speciesName(draft.speciesId)} — likely a misread.`);
   }
-  if (draft.speciesId && draft.cp !== null && isPlausibleCp(draft.speciesId, draft.cp)) {
-    const est = estimateLevel(draft.speciesId, draft.cp);
-    notes.push(
-      `Level ${est.level}${est.approximate ? ' (approx)' : ''}, assuming 15/15/15 IVs.`,
-    );
+  if (draft.speciesId && (draft.cp !== null || draft.hp !== null)) {
+    const r = reconcile(draft.speciesId, draft.cp, draft.hp);
+    if (!r.consistent && r.expectedCp) {
+      notes.push(
+        `CP ${draft.cp} doesn't fit HP ${draft.hp} — expected roughly ` +
+        `${r.expectedCp.min}-${r.expectedCp.max}. The CP was probably misread; ` +
+        `using HP for the level instead. Correct it above if you can read it.`,
+      );
+    }
+    if (r.level !== null) {
+      notes.push(
+        `Level ${r.level}, from ${r.source === 'hp' ? 'HP' : r.source === 'cp' ? 'CP' : 'CP and HP'}.`,
+      );
+    }
   }
   if (draft.cp === null) notes.push('No CP found — type it in.');
   if (!draft.speciesId) {
@@ -294,7 +314,9 @@ function Warnings({ draft }: { draft: Draft }) {
         `No species name on screen — probably renamed. Narrowed to ` +
         `${draft.alternatives.length} candidate${draft.alternatives.length === 1 ? '' : 's'} ` +
         `from CP${draft.hp !== null ? ' and HP' : ''}` +
-        `${draft.types.length ? ` (${draft.types.join('/')})` : ''} — pick yours above.`,
+        `${draft.types.length ? `, type ${draft.types.join('/')}` : ''}` +
+        `${draft.familyId ? `, ${draft.familyId.replace('FAMILY_', '').toLowerCase()} candy` : ''}` +
+        ` — pick yours above.`,
       );
     } else {
       notes.push(

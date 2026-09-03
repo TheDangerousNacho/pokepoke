@@ -1,6 +1,7 @@
 import { parseCp, parseScreenshotText, type ScanCandidate } from './parse';
-import { identifyFromStats, parseTypes, type StatsMatch } from './identify';
+import { identifyFromStats, parseCandyFamily, parseTypes, type StatsMatch } from './identify';
 import { prepareImage } from './image';
+import { reconcile, type Reconciliation } from './reconcile';
 
 /**
  * Screenshot OCR.
@@ -25,8 +26,12 @@ export interface ScanResult extends ScanCandidate {
   previewUrl: string;
   /** Types read off the badges, when legible. Narrows a renamed Pokémon a lot. */
   types: string[];
+  /** Family from the candy label, e.g. FAMILY_EEVEE. */
+  familyId: string | null;
   /** Species consistent with the CP/HP pair — for renamed Pokémon with no name. */
   statsCandidates: StatsMatch[];
+  /** CP/HP cross-check, when the species is known. */
+  reconciliation: Reconciliation | null;
   /** Every OCR pass, so a bad scan can be diagnosed rather than guessed at. */
   debug: { pass: string; text: string }[];
 }
@@ -64,13 +69,18 @@ async function readCp(
   renderings: string[],
   debug: { pass: string; text: string }[],
 ): Promise<number | null> {
+  // Only the whitelist. Forcing single-line segmentation (PSM 7) was tried and
+  // measurably worse — it took CP from 4/5 to 0/5 on the sample screenshots.
   await worker.setParameters({ tessedit_char_whitelist: '0123456789CPcp ' });
   try {
     for (const [i, image] of renderings.entries()) {
       const { data } = await worker.recognize(image);
       debug.push({ pass: `cp-band-${i}`, text: data.text.trim() });
 
-      const cp = parseCp(data.text) ?? parseCp(`CP ${data.text.replace(/[^0-9]/g, ' ').trim()}`);
+      // Only accept a number that is actually adjacent to a "CP" label. An
+      // earlier version fell back to "any digits in the band", which happily
+      // read the status bar clock as a CP of 716.
+      const cp = parseCp(data.text);
       if (cp !== null) return cp;
     }
     return null;
@@ -103,16 +113,19 @@ export async function scanScreenshots(
 
     onProgress?.({ file: file.name, progress: 0.9, status: 'matching' });
     const types = parseTypes(data.text);
+    const familyId = parseCandyFamily(data.text);
     // Only worth computing when the name failed — that is the renamed case.
     const statsCandidates =
       parsed.speciesId === null && cp !== null && parsed.hp !== null
-        ? identifyFromStats(cp, parsed.hp, { types: types as never[] })
+        ? identifyFromStats(cp, parsed.hp, { types: types as never[], familyId })
         : [];
 
     results.push({
       ...parsed,
+      reconciliation: parsed.speciesId ? reconcile(parsed.speciesId, cp, parsed.hp) : null,
       cp,
       types,
+      familyId,
       statsCandidates,
       file: file.name,
       previewUrl: URL.createObjectURL(file),

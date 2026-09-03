@@ -1,5 +1,6 @@
 import { combatPower, cpm } from '../engine/cpm';
 import { gm } from '../engine/gamemaster';
+import { matchSpeciesName } from './match';
 import type { PokemonType } from '../engine/types';
 
 export interface StatsMatch {
@@ -31,13 +32,19 @@ const IV_VALUES = Array.from({ length: 16 }, (_, i) => i);
  * Results come back in Pokédex order for scanning, and the caller must present
  * them as "it could be one of these", never as an answer.
  *
- * Type badges are the real discriminator: passing `types` typically cuts the
- * list by an order of magnitude.
+ * Type badges and the candy label are the real discriminators. The candy is
+ * named after the family's base species ("EEVEE CANDY" on a renamed Sylveon),
+ * which is the one species fact a renamed Pokémon cannot hide.
  */
 export function identifyFromStats(
   cp: number,
   hp: number,
-  { types, limit = 60 }: { types?: PokemonType[]; limit?: number } = {},
+  { types, familyId, limit = 60 }: {
+    types?: PokemonType[];
+    /** Evolutionary family from the candy label — the strongest filter available. */
+    familyId?: string | null;
+    limit?: number;
+  } = {},
 ): StatsMatch[] {
   if (!Number.isInteger(cp) || !Number.isInteger(hp) || cp < 10 || hp < 10) return [];
 
@@ -45,6 +52,7 @@ export function identifyFromStats(
 
   for (const species of Object.values(gm.species)) {
     if (types?.length && !types.every((t) => species.types.includes(t))) continue;
+    if (familyId && species.familyId !== familyId) continue;
 
     const levels: number[] = [];
 
@@ -94,4 +102,35 @@ export function parseTypes(text: string): PokemonType[] {
   }
   // More than two means we matched prose, not the badges.
   return found.size <= 2 ? [...found] : [];
+}
+
+/**
+ * Reads the evolutionary family from the candy label.
+ *
+ * The detail screen shows "<BASE SPECIES> CANDY", named for the base of the
+ * family rather than the Pokémon itself — so a renamed Sylveon still displays
+ * "EEVEE CANDY". That makes it the strongest species signal available when the
+ * name has been replaced by a nickname.
+ */
+export function parseCandyFamily(text: string): string | null {
+  // The label sits among other words ("STARDUST EEVEE CANDY EEVEE CANDY XL"),
+  // so anchor on CANDY and walk backwards a word at a time rather than trying
+  // to capture the name in one greedy group — that swallowed "STARDUST EEVEE".
+  const words = text.replace(/[^A-Za-z0-9'.\-\s]/g, ' ').split(/\s+/).filter(Boolean);
+
+  for (let i = 0; i < words.length; i++) {
+    if (words[i].toUpperCase() !== 'CANDY') continue;
+
+    // Try the single preceding word first, then two, for names like "Mr Mime".
+    for (const take of [1, 2]) {
+      const start = i - take;
+      if (start < 0) continue;
+      const phrase = words.slice(start, i).join(' ');
+      const [best] = matchSpeciesName(phrase, 1);
+      if (best && best.score >= 0.85) {
+        return gm.species[best.species.id]?.familyId ?? null;
+      }
+    }
+  }
+  return null;
 }

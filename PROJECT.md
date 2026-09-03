@@ -190,13 +190,36 @@ no login, works on any platform.
 - Nothing is saved without review. Rows show why they might be wrong:
   uncertain name match, a CP the species cannot reach, the assumed level.
 
-**Tested with synthetic screenshots only.** The pipeline is verified end to end
-— a generated image of "CP 3056 / Machamp / HP 175/175" reads back as MACHAMP,
-CP 3056, level 40 — but real Pokémon GO screenshots have stylised fonts over
-gradients and photos, and OCR will do measurably worse on them. Accuracy on
-real captures is unmeasured. If it disappoints, the next lever is image
-preprocessing (greyscale, contrast, cropping to the CP and name regions), which
-should be tuned against real captures rather than guessed at.
+**Measured against five real screenshots** (kept in `test-screenshots/`,
+gitignored). Current accuracy: species 5/5, HP 5/5, CP 4/5 — and the fifth is
+detected as wrong rather than silently accepted.
+
+What the real captures taught, none of which was guessable:
+
+- **The status bar clock was being read as CP.** "7:16" became CP 716. Fixed by
+  cropping the CP band horizontally as well as vertically — CP is centred while
+  the clock and battery icons sit at the edges — and by deleting a
+  digits-anywhere fallback that accepted any number in the band.
+- **Fixed luminance thresholds fail on bright backgrounds.** White CP text over
+  sand or sky either kept everything or nothing. Thresholds are now chosen per
+  image from the crop's own luminance histogram (`percentileLuma`).
+- **Forcing single-line page segmentation (PSM 7) made CP much worse** — 4/5
+  down to 0/5. Tried and reverted; noted so it is not retried.
+- **The candy label names the family's base species.** A renamed Sylveon still
+  shows "EEVEE CANDY", which is the one species fact a nickname cannot hide.
+  Combined with the type badge it identified the renamed sample *uniquely*.
+- **The candy label is also a trap.** A renamed Gyarados shows "MAGIKARP CANDY",
+  which would confidently match the wrong species. Lines containing
+  candy/energy/stardust are excluded from name matching.
+- **HP reads far more reliably than CP** (5/5 vs 4/5) — it is small dark text on
+  a white card rather than near-white text over artwork. So `reconcile` uses HP
+  as a witness against a bad CP: if no integer IV spread reproduces both for
+  that species, the CP is rejected and the level comes from HP instead.
+
+Level is chosen as the LOWEST that fits, not the median. Reaching a higher
+level at the same CP requires worse IVs, so the low end is both likelier and
+the safer error — it understates damage rather than promising a win the team
+cannot deliver.
 
 ### Phase 3 — Move recommendations, ~3–5 days
 

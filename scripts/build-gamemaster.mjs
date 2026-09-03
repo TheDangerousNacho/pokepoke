@@ -145,6 +145,10 @@ function buildSpecies(templates, resolveMove) {
         pokemonId,
         form: e.form,
         dex: e.dex,
+        // FAMILY_CHARMANDER etc. The candy on the detail screen is named after
+        // the family's base species, which is the only species signal a renamed
+        // Pokémon leaves on screen.
+        familyId: p.familyId ?? null,
         types: [shortType(p.type), p.type2 ? shortType(p.type2) : null].filter(Boolean),
         baseAttack: p.stats.baseAttack,
         baseDefense: p.stats.baseDefense,
@@ -232,6 +236,8 @@ function buildFriendship(templates) {
  */
 function pack(bundle) {
   const moveIds = Object.keys(bundle.moves);
+  const familyIds = [...new Set(Object.values(bundle.species).map((s) => s.familyId).filter(Boolean))].sort();
+  const familyIndex = new Map(familyIds.map((id, i) => [id, i]));
   const moveIndex = new Map(moveIds.map((id, i) => [id, i]));
   const typeIndex = new Map(bundle.types.map((t, i) => [t, i]));
 
@@ -265,10 +271,11 @@ function pack(bundle) {
     s.eliteFastMoves.map(ref), s.eliteChargedMoves.map(ref),
     s.hasShadow ? 1 : 0,
     s.megas.map((m) => [m.id, m.types.map(t), m.baseAttack, m.baseDefense, m.baseStamina]),
+    s.familyId === null ? -1 : familyIndex.get(s.familyId),
   ]);
 
   return {
-    format: 2,
+    format: 3,
     source: bundle.source,
     types: bundle.types,
     typeChart: bundle.types.map((name) => bundle.typeChart[name]),
@@ -279,6 +286,7 @@ function pack(bundle) {
       Object.entries(bundle.weatherAffinities).map(([k, v]) => [k, v.map(t)]),
     ),
     moveIds,
+    familyIds,
     moves,
     species,
   };

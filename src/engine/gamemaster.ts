@@ -17,7 +17,7 @@ type PackedSpecies = [
   id: string, basePokemonId: string | null, dex: number, types: number[],
   atk: number, def: number, sta: number,
   fast: number[], charged: number[], eliteFast: number[], eliteCharged: number[],
-  hasShadow: number, megas: PackedMega[],
+  hasShadow: number, megas: PackedMega[], family: number,
 ];
 
 interface PackedBundle {
@@ -30,12 +30,13 @@ interface PackedBundle {
   friendshipAttackMultipliers: number[];
   weatherAffinities: Record<string, number[]>;
   moveIds: string[];
+  familyIds: string[];
   moves: PackedMove[];
   species: PackedSpecies[];
 }
 
 function unpack(p: PackedBundle): GameMaster {
-  if (p.format !== 2) {
+  if (p.format !== 3) {
     throw new Error(`gamemaster.json is format ${p.format}; run \`npm run build:gm\``);
   }
   const type = (i: number) => p.types[i];
@@ -54,7 +55,7 @@ function unpack(p: PackedBundle): GameMaster {
   const species: Record<string, Species> = {};
   for (const s of p.species) {
     const [id, basePokemonId, dex, types, baseAttack, baseDefense, baseStamina,
-           fast, charged, eliteFast, eliteCharged, hasShadow, megas] = s;
+           fast, charged, eliteFast, eliteCharged, hasShadow, megas, family] = s;
     const name = (i: number) => p.moveIds[i];
 
     species[id] = {
@@ -63,6 +64,7 @@ function unpack(p: PackedBundle): GameMaster {
       pokemonId: basePokemonId ?? id,
       form: basePokemonId === null ? null : id,
       dex,
+      familyId: family === -1 ? null : p.familyIds[family],
       types: types.map(type),
       baseAttack, baseDefense, baseStamina,
       fastMoves: fast.map(name),

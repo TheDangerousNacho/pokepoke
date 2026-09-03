@@ -75,6 +75,16 @@ export function parseHp(text: string): number | null {
 const NOISE = /^(cp|hp|stardust|candy|power\s*up|evolve|weight|height|\d+|.{0,2})$/i;
 
 /**
+ * Lines that CONTAIN a species name but are not this Pokémon's name.
+ *
+ * The candy and mega-energy labels name the family's base species, so a
+ * renamed Gyarados shows "MAGIKARP CANDY" — matching that would confidently
+ * put the wrong Pokémon in the roster. They are excluded here and used
+ * deliberately elsewhere, via parseCandyFamily.
+ */
+const NOT_A_NAME = /\b(candy|energy|stardust|dust)\b/i;
+
+/**
  * Finds the species name in OCR output.
  *
  * The name is not at a predictable line index — the label sits under the model
@@ -86,7 +96,7 @@ export function parseSpecies(text: string): { matches: NameMatch[]; nameText: st
   const lines = text
     .split(/[\n\r]+/)
     .map((l) => l.trim())
-    .filter((l) => l.length >= 3 && !NOISE.test(l));
+    .filter((l) => l.length >= 3 && !NOISE.test(l) && !NOT_A_NAME.test(l));
 
   let best: { matches: NameMatch[]; nameText: string } | null = null;
   for (const line of lines) {

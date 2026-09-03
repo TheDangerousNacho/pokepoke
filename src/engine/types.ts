@@ -32,6 +32,8 @@ export interface Species {
   pokemonId: string;
   form: string | null;
   dex: number;
+  /** e.g. FAMILY_EEVEE. Null when the dump omits it. */
+  familyId: string | null;
   types: PokemonType[];
   baseAttack: number;
   baseDefense: number;

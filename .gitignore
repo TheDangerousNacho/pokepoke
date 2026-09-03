@@ -29,3 +29,4 @@ data/vendor/
 # Real screenshots for OCR tuning — kept local.
 test-screenshots/*
 !test-screenshots/README.md
+public/_test/
