@@ -168,12 +168,35 @@ Engine:
 UI: pick boss → pick up to 6 of your Pokémon (manual entry) → ranked attackers +
 solo/duo/trio verdict.
 
-### Phase 2 — Fast scan, ~1–1.5 weeks
+### Phase 2 — Fast scan — BUILT
 
-Upload a handful of screenshots → OCR → fuzzy-match name against species list →
-extract CP/HP → **review-and-correct screen** before saving. No overlay, no
-accessibility service, works on any platform. Skip exact IV solving in v1: IV
-precision moves DPS by only a few percent, and CP + species seeds a usable roster.
+Upload screenshots → OCR → fuzzy-match name → extract CP/HP →
+**review-and-correct screen** → roster. No overlay, no accessibility service,
+no login, works on any platform.
+
+- **Tesseract.js**, dynamically imported so it costs nothing until the Scan
+  tab is opened. The main bundle grew 3.7KB; the WASM and language data load
+  from CDN on first use, so the first scan needs a network connection.
+- Images narrower than 1000px are upscaled first — Tesseract degrades badly
+  below that, and share-sheet screenshots often land there.
+- **Level is estimated from CP** assuming 15/15/15 IVs (`estimateLevel`).
+  Exact IV solving is skipped per the brief. The assumption errs in the safe
+  direction: a real 10/10/10 shows a lower CP than a hundo, so it maps to a
+  lower estimated level and *understates* damage.
+- **Name matching folds OCR glyph confusions** (RN/M, 0/O, 1/I, VV/W) on both
+  the query and the species list, so the corruption is symmetric and matches
+  still land. Digits are recovered separately inside CP/HP fields, where
+  "CP 3O56" is common.
+- Nothing is saved without review. Rows show why they might be wrong:
+  uncertain name match, a CP the species cannot reach, the assumed level.
+
+**Tested with synthetic screenshots only.** The pipeline is verified end to end
+— a generated image of "CP 3056 / Machamp / HP 175/175" reads back as MACHAMP,
+CP 3056, level 40 — but real Pokémon GO screenshots have stylised fonts over
+gradients and photos, and OCR will do measurably worse on them. Accuracy on
+real captures is unmeasured. If it disappoints, the next lever is image
+preprocessing (greyscale, contrast, cropping to the CP and name regions), which
+should be tuned against real captures rather than guessed at.
 
 ### Phase 3 — Move recommendations, ~3–5 days
 

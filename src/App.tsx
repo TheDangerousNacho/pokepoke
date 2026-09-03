@@ -8,9 +8,10 @@ import { BossPicker, type BossListEntry } from './ui/BossPicker';
 import { ProfileBar } from './ui/ProfileBar';
 import { Results } from './ui/Results';
 import { RosterEditor } from './ui/RosterEditor';
+import { ScanTab } from './ui/ScanTab';
 import { speciesName } from './ui/format';
 
-type Tab = 'boss' | 'roster' | 'results';
+type Tab = 'boss' | 'roster' | 'scan' | 'results';
 
 const WEATHER: Array<{ value: WeatherCondition | 'NONE'; label: string }> = [
   { value: 'NONE', label: 'No boost' },
@@ -93,10 +94,19 @@ export default function App() {
         </>
       )}
 
+      {tab === 'scan' && (
+        <ScanTab
+          onImport={(entries) => {
+            setStore(updateRoster(store, profile.id, [...profile.roster, ...entries]));
+            setTab('roster');
+          }}
+        />
+      )}
+
       {tab === 'results' && <Results boss={boss} roster={profile.roster} conditions={conditions} />}
 
       <nav className="tabs">
-        {([['boss', 'Boss'], ['roster', 'Roster'], ['results', 'Results']] as const).map(([id, label]) => (
+        {([['boss', 'Boss'], ['roster', 'Roster'], ['scan', 'Scan'], ['results', 'Results']] as const).map(([id, label]) => (
           <button key={id} aria-current={tab === id} onClick={() => setTab(id)}>
             {label}
           </button>
