@@ -1,4 +1,4 @@
-import { cpm } from './cpm';
+import { cpm, MAX_LEVEL } from './cpm';
 import { cycleDps, referenceDefender } from './moveset';
 import { gm, getSpecies } from './gamemaster';
 import { BOSS_IV_ATTACK, BOSS_IV_DEFENSE, getTier, type RaidTier } from './raidTiers';
@@ -24,6 +24,11 @@ export interface RosterEntry {
    */
   chargedMove2?: string;
   isShadow?: boolean;
+  /**
+   * Best Buddy status. Worth +1 level, but only while this Pokémon is the
+   * active buddy — see `withBuddyBoost`, which is where that rule lives.
+   */
+  isBestBuddy?: boolean;
   /** Mega form id (e.g. `TEMP_EVOLUTION_MEGA_X`) when this Pokémon is megaed. */
   megaId?: string;
 }
@@ -68,6 +73,51 @@ export function buildAttacker(entry: RosterEntry): Combatant {
     chargedMove: entry.chargedMove,
     isShadow: shadow,
   };
+}
+
+/** A Best Buddy fights one level higher, capped at the top of the CPM table. */
+export const bestBuddyLevel = (level: number) => Math.min(level + 1, MAX_LEVEL);
+
+/**
+ * The party with the Best Buddy bonus applied to at most ONE Pokémon.
+ *
+ * You can only have one active buddy at a time, so a party of six Best
+ * Buddies does not get six boosts — a naive per-entry flag would quietly
+ * inflate every such party. The boost goes to whichever of them does the most
+ * damage against this boss, which is the buddy a player would actually walk in
+ * with.
+ *
+ * The chosen entry comes back with the level already raised and the flag
+ * cleared, so nothing downstream has to know the rule exists.
+ */
+export function withBuddyBoost(party: RosterEntry[], defenderTypes: PokemonType[]): RosterEntry[] {
+  let bestIndex = -1;
+  let bestDps = -Infinity;
+
+  for (let i = 0; i < party.length; i++) {
+    const entry = party[i];
+    if (!entry.isBestBuddy) continue;
+
+    const built = buildAttacker(entry);
+    const dps = cycleDps(
+      { attack: built.attack, types: built.types },
+      referenceDefender(defenderTypes),
+      entry.fastMove,
+      entry.chargedMove,
+    );
+    if (dps > bestDps) {
+      bestDps = dps;
+      bestIndex = i;
+    }
+  }
+
+  if (bestIndex === -1) return party;
+
+  return party.map((entry, i) =>
+    i === bestIndex
+      ? { ...entry, level: bestBuddyLevel(entry.level), isBestBuddy: false }
+      : { ...entry, isBestBuddy: false },
+  );
 }
 
 /**

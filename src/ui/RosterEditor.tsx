@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { getSpecies } from '../engine/gamemaster';
 import { bestMoveset } from '../engine/moveset';
 import { combatPower } from '../engine/cpm';
-import type { RosterEntry } from '../engine/stats';
+import { bestBuddyLevel, type RosterEntry } from '../engine/stats';
 import { newId, type StoredPokemon } from '../storage/profiles';
 import { megaName, moveName, speciesName } from './format';
 import { SpeciesPicker } from './SpeciesPicker';
@@ -45,7 +45,9 @@ function EntryCard({ entry, onChange, onRemove }: {
   // be entered accurately, even though Phase 3 must not *recommend* them.
   const fastMoves = [...species.fastMoves, ...species.eliteFastMoves];
   const chargedMoves = [...species.chargedMoves, ...species.eliteChargedMoves];
-  const cp = combatPower(species, entry.ivs, entry.level);
+  // The game shows a Best Buddy's boosted CP, so this has to match what the
+  // user is looking at on their phone.
+  const cp = combatPower(species, entry.ivs, entry.isBestBuddy ? bestBuddyLevel(entry.level) : entry.level);
 
   const set = (patch: Partial<StoredPokemon>) => onChange({ ...entry, ...patch });
 
@@ -65,10 +67,13 @@ function EntryCard({ entry, onChange, onRemove }: {
           {speciesName(entry.speciesId)}
           {entry.megaId ? ` · ${megaName(entry.megaId)}` : ''}
           {entry.isShadow ? ' · Shadow' : ''}
+          {entry.isBestBuddy ? ' · Best Buddy' : ''}
         </h3>
         <button className="ghost danger" onClick={onRemove} aria-label="Remove">Remove</button>
       </div>
-      <p className="small muted mono" style={{ margin: '0 0 10px' }}>CP {cp} · Level {entry.level}</p>
+      <p className="small muted mono" style={{ margin: '0 0 10px' }}>
+        CP {cp} · Level {entry.level}{entry.isBestBuddy ? ' +1' : ''}
+      </p>
 
       <div className="grid-2">
         <div className="field">
@@ -127,6 +132,18 @@ function EntryCard({ entry, onChange, onRemove }: {
           </select>
         </div>
       </div>
+
+      <label className="row" style={{ marginTop: 10 }}>
+        <input
+          type="checkbox"
+          checked={entry.isBestBuddy ?? false}
+          onChange={(e) => set({ isBestBuddy: e.target.checked || undefined })}
+        />
+        <span className="grow">
+          Best Buddy
+          <span className="small muted"> · +1 level while it's your active buddy</span>
+        </span>
+      </label>
 
       <div className="field" style={{ marginTop: 8 }}>
         <label>Second charged move</label>

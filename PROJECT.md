@@ -674,3 +674,31 @@ is what *that moveset* does.
 Unlocking a second charged move costs candy and stardust and is not yet
 recommended anywhere — the tool records that you have one, it does not tell
 you to buy one.
+
+
+### Best Buddy — BUILT
+
+`RosterEntry.isBestBuddy`, a checkbox on the Roster tab. Worth +1 level, so a
+level 40 Best Buddy fights at 41 and a level 50 one at 51 — the CPM table goes
+to 55, and `bestBuddyLevel` caps there rather than throwing.
+
+**The bonus goes to exactly one Pokémon per party, not to every Best Buddy in
+it.** You can only have one active buddy at a time, so a per-entry flag applied
+naively would inflate a party of six Best Buddies six times over. `withBuddyBoost`
+gives it to whichever of them does the most damage *against this boss* — the
+buddy a player would actually walk in with — and clears the flag on the way
+out, so the rule cannot be applied twice. Against a Dark boss that is the
+Machamp; against a Ghost one it is the Metagross, which is why the choice is
+made per fight rather than by party order.
+
+A Pokémon rated on its own (`rateAttacker`, the Best attackers list) keeps the
+bonus, because a lone attacker is trivially the one you would set as your
+buddy. That is a different frame from the party sim, not an inconsistency.
+
+The roster card shows the **boosted CP**, since that is the number on the
+user's phone, with the level as "40 +1" so the boost is visible rather than
+looking like an arithmetic error.
+
+Not modelled: the scan cannot know a Pokémon is a Best Buddy, and a Best
+Buddy's screenshot CP is the boosted one — so scanning one will infer a level
+one step high until the box is ticked.

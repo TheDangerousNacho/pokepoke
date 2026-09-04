@@ -1,7 +1,10 @@
 import { damage, energyFromDamageTaken, type BattleConditions } from './damage';
 import { gm, getMove } from './gamemaster';
 import { getTier } from './raidTiers';
-import { buildAttacker, buildBoss, withBestChargedMove, type Combatant, type RaidBossSpec, type RosterEntry } from './stats';
+import {
+  buildAttacker, buildBoss, withBestChargedMove, withBuddyBoost,
+  type Combatant, type RaidBossSpec, type RosterEntry,
+} from './stats';
 
 export interface SimOptions {
   conditions?: BattleConditions;
@@ -94,8 +97,10 @@ export function simulateParty(
   const timerMs = tier.timerSeconds * 1000;
   const boss = buildBoss(bossSpec);
 
-  // Each Pokémon fights with whichever of its charged moves suits this boss.
-  const roster = party.map((e) => buildAttacker(withBestChargedMove(e, boss.types)));
+  // Each Pokémon fights with whichever of its charged moves suits this boss,
+  // and at most one of them carries the Best Buddy bonus.
+  const roster = withBuddyBoost(party.map((e) => withBestChargedMove(e, boss.types)), boss.types)
+    .map(buildAttacker);
   let slot = 0;
   let player = makeActor(roster[slot], 0);
   const bossActor = makeActor(boss, gm.settings.enemyAttackIntervalS * 1000);
@@ -238,7 +243,10 @@ export function rateAttacker(
 ): AttackerRating {
   // Resolved here as well as inside the simulation, so the rating names the
   // move this Pokémon actually used rather than whichever slot it is stored in.
-  const used = withBestChargedMove(entry, buildBoss(bossSpec).types);
+  // A single attacker is trivially the one you would walk in as your buddy,
+  // so it keeps the bonus here even though a full party shares one between six.
+  const bossTypes = buildBoss(bossSpec).types;
+  const used = withBuddyBoost([withBestChargedMove(entry, bossTypes)], bossTypes)[0];
   const sim = simulateParty([used], bossSpec, { ...options, relobbyMs: Number.MAX_SAFE_INTEGER });
   const attacker = buildAttacker(used);
 

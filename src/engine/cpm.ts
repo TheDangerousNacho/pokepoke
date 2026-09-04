@@ -1,6 +1,6 @@
 import { gm } from './gamemaster';
 
-const MAX_LEVEL = gm.cpMultipliers.length;
+export const MAX_LEVEL = gm.cpMultipliers.length;
 
 /**
  * CP multiplier for a Pokémon level. The Game Master only ships whole levels;
