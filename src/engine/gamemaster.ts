@@ -17,7 +17,10 @@ type PackedSpecies = [
   id: string, basePokemonId: string | null, dex: number, types: number[],
   atk: number, def: number, sta: number,
   fast: number[], charged: number[], eliteFast: number[], eliteCharged: number[],
-  hasShadow: number, rarity: number, megas: PackedMega[], family: number,
+  hasShadow: number, rarity: number,
+  /** Stardust and candy to unlock a second charged move; -1 when impossible. */
+  secondMoveStardust: number, secondMoveCandy: number,
+  megas: PackedMega[], family: number,
 ];
 
 interface PackedBundle {
@@ -40,7 +43,7 @@ interface PackedBundle {
 const RARITIES: Rarity[] = ['NORMAL', 'LEGENDARY', 'MYTHIC', 'ULTRA_BEAST'];
 
 function unpack(p: PackedBundle): GameMaster {
-  if (p.format !== 5) {
+  if (p.format !== 6) {
     throw new Error(`gamemaster.json is format ${p.format}; run \`npm run build:gm\``);
   }
   const type = (i: number) => p.types[i];
@@ -59,7 +62,8 @@ function unpack(p: PackedBundle): GameMaster {
   const species: Record<string, Species> = {};
   for (const s of p.species) {
     const [id, basePokemonId, dex, types, baseAttack, baseDefense, baseStamina,
-           fast, charged, eliteFast, eliteCharged, hasShadow, rarity, megas, family] = s;
+           fast, charged, eliteFast, eliteCharged, hasShadow, rarity,
+           secondMoveStardust, secondMoveCandy, megas, family] = s;
     const name = (i: number) => p.moveIds[i];
 
     species[id] = {
@@ -77,6 +81,8 @@ function unpack(p: PackedBundle): GameMaster {
       eliteChargedMoves: eliteCharged.map(name),
       hasShadow: hasShadow === 1,
       rarity: RARITIES[rarity],
+      secondMoveCost:
+        secondMoveStardust < 0 ? null : { stardust: secondMoveStardust, candy: secondMoveCandy },
       megas: megas.map(([mid, mtypes, atk, def, sta]): MegaForm => ({
         id: mid,
         types: mtypes.map(type),

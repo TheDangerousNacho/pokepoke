@@ -4,6 +4,7 @@ import type { BattleConditions } from '../engine/damage';
 import type { RaidBossSpec, RosterEntry } from '../engine/stats';
 import { rankUpgrades, type MoveUpgrade } from '../engine/upgrades';
 import { BenchGaps } from './BenchGaps';
+import { SecondMoves } from './SecondMoves';
 import type { BossListEntry } from './BossPicker';
 import { bossName, moveName, speciesName } from './format';
 
@@ -76,6 +77,8 @@ export function Upgrades({ roster, rotation, selectedBoss, conditions }: Props) 
         tries, not a price. Elite TMs let you pick, and are ranked by gain per
         TM spent because that's the scarce one.
       </p>
+
+      <SecondMoves roster={roster} bosses={bosses} conditions={conditions} />
 
       <BenchGaps roster={roster} bosses={bosses} conditions={conditions} />
     </>

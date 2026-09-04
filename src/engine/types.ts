@@ -49,6 +49,8 @@ export interface Species {
   /** How hard this species is to obtain. Legendaries and Ultra Beasts come
    *  from raids; Mythicals are quest-gated and usually one per account. */
   rarity: Rarity;
+  /** Cost of unlocking the second charged move slot. Null when it cannot be. */
+  secondMoveCost: { stardust: number; candy: number } | null;
   megas: MegaForm[];
 }
 

@@ -702,3 +702,36 @@ looking like an arithmetic error.
 Not modelled: the scan cannot know a Pokémon is a Best Buddy, and a Best
 Buddy's screenshot CP is the boosted one — so scanning one will infer a level
 one step high until the box is ticked.
+
+
+### Unlocking a second charged move — BUILT
+
+`src/engine/secondMove.ts`, shown on the **TMs** tab between the TM advice and
+the bench gaps — the middle rung of the same ladder: change a move you have,
+add one to a Pokémon you have, or go and get a different Pokémon.
+
+The cost is real data, not an assumption: `thirdMove.stardustToUnlock` and
+`candyToUnlock` per species, added to the bundle as format 6. It ranges from
+10,000/25 to 100,000/100. Smeargle carries a sentinel (no stardust field,
+candy 9,999,999) meaning it cannot be unlocked at all, which is why a missing
+stardust cost is stored as null rather than zero.
+
+**The baseline is the best single move, not the one currently equipped.**
+Measured against what the Pokémon has today, an unlock would take credit for an
+improvement an ordinary TM buys far more cheaply, and the tool would recommend
+75,000 dust for something a TM already offers. Same reasoning as the Elite TM
+threshold: a recommendation has to beat the cheaper route, not just beat doing
+nothing. When the pair's primary move is not the one equipped, the card says so
+— the TM is a prerequisite, and hiding that would understate the cost.
+
+What is measured is coverage, not damage: the mean DPS when every boss gets the
+better of a pair, over the mean DPS of the best single move. Against one boss
+the gain is exactly zero, which is the correct answer and is pinned by a test.
+
+The minimum gain is **5%**, higher than the TM tab's 3%. An unlock costs
+several power-up levels' worth of dust from the same pile; a TM is cheap enough
+that a marginal gain is still worth taking. The list is capped at six, ranked by
+gain per stardust so the cheap common Pokémon are not buried under legendaries
+that gain slightly more for twice the price.
+
+Elite-TM-only moves are excluded: the unlock draws from the ordinary pool.

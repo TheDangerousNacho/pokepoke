@@ -167,6 +167,13 @@ function buildSpecies(templates, resolveMove) {
         // NORMAL / LEGENDARY / MYTHIC / ULTRA_BEAST. How hard a species is to
         // get is the difference between advice and a wish list.
         rarity: (p.pokemonClass ?? 'POKEMON_CLASS_NORMAL').replace('POKEMON_CLASS_', ''),
+        // Cost of the second charged move slot. Smeargle carries a sentinel
+        // (no stardust field, candy 9999999) meaning it cannot be unlocked at
+        // all, which is why an absent stardust cost is treated as "never".
+        secondMoveCost:
+          p.thirdMove?.stardustToUnlock === undefined
+            ? null
+            : { stardust: p.thirdMove.stardustToUnlock, candy: p.thirdMove.candyToUnlock },
         megas: (p.tempEvoOverrides ?? [])
           .filter((o) => o.stats)
           .map((o) => ({
@@ -307,12 +314,14 @@ function pack(bundle) {
     s.eliteFastMoves.map(ref), s.eliteChargedMoves.map(ref),
     s.hasShadow ? 1 : 0,
     RARITIES.indexOf(s.rarity),
+    s.secondMoveCost === null ? -1 : s.secondMoveCost.stardust,
+    s.secondMoveCost === null ? -1 : s.secondMoveCost.candy,
     s.megas.map((m) => [m.id, m.types.map(t), m.baseAttack, m.baseDefense, m.baseStamina]),
     s.familyId === null ? -1 : familyIndex.get(s.familyId),
   ]);
 
   return {
-    format: 5,
+    format: 6,
     source: bundle.source,
     types: bundle.types,
     typeChart: bundle.types.map((name) => bundle.typeChart[name]),
