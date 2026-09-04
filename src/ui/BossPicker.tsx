@@ -1,9 +1,10 @@
-import bossData from '../data/bosses.json';
+import { useState } from 'react';
+import type { Rotation } from '../storage/rotation';
 import { getSpecies } from '../engine/gamemaster';
 import { getTier, type RaidTier } from '../engine/raidTiers';
-import type { RaidBossSpec } from '../engine/stats';
+import { buildBoss, type RaidBossSpec } from '../engine/stats';
 import { CustomBoss } from './CustomBoss';
-import { bossName, moveName, speciesName } from './format';
+import { bossName, moveName } from './format';
 import { TypeChip } from './TypeChip';
 
 export interface BossListEntry extends RaidBossSpec {
@@ -11,12 +12,6 @@ export interface BossListEntry extends RaidBossSpec {
   /** Built by hand rather than taken from the rotation feed. */
   custom?: boolean;
 }
-
-export const BOSSES = (bossData.bosses as Array<{
-  speciesId: string; tier: string; shiny: boolean; fastMove: string; chargedMove: string; megaId?: string;
-}>).map((b) => ({ ...b, tier: b.tier as RaidTier })) as BossListEntry[];
-
-export const BOSS_LIST_FETCHED_AT = bossData.fetchedAt;
 
 const TIER_ORDER: RaidTier[] = ['1', '3', '4', '5', '6', 'MEGA', 'MEGA_LEGENDARY', 'ELITE', 'SHADOW_3', 'SHADOW_5'];
 
@@ -27,25 +22,32 @@ const TIER_LABEL: Record<RaidTier, string> = {
 };
 
 interface Props {
+  rotation: Rotation;
   selected: BossListEntry | null;
   onSelect: (boss: BossListEntry) => void;
   onChangeMoves: (boss: BossListEntry) => void;
+  onRefresh: () => Promise<void>;
 }
 
-export function BossPicker({ selected, onSelect, onChangeMoves }: Props) {
+export function BossPicker({ rotation, selected, onSelect, onChangeMoves, onRefresh }: Props) {
   const grouped = TIER_ORDER
-    .map((tier) => ({ tier, bosses: BOSSES.filter((b) => b.tier === tier) }))
+    .map((tier) => ({ tier, bosses: rotation.bosses.filter((b) => b.tier === tier) }))
     .filter((g) => g.bosses.length > 0);
 
   const isSelected = (b: BossListEntry) =>
-    selected?.speciesId === b.speciesId && selected?.tier === b.tier;
+    selected?.speciesId === b.speciesId &&
+    selected?.tier === b.tier &&
+    selected?.megaId === b.megaId;
 
   return (
     <>
-      <h2>Current raid bosses</h2>
-      <p className="small muted" style={{ marginTop: -4 }}>
-        Rotation fetched {new Date(BOSS_LIST_FETCHED_AT).toLocaleDateString()}.
-        Refresh with <code>npm run fetch:bosses</code>.
+      <div className="spread">
+        <h2 style={{ margin: 0 }}>Current raid bosses</h2>
+        <RefreshButton onRefresh={onRefresh} />
+      </div>
+      <p className="small muted" style={{ margin: '4px 0 10px' }}>
+        Rotation from {new Date(rotation.fetchedAt).toLocaleDateString()}
+        {rotation.refreshed ? '' : ', shipped with the app'}.
       </p>
 
       {grouped.map(({ tier, bosses }) => (
@@ -54,15 +56,15 @@ export function BossPicker({ selected, onSelect, onChangeMoves }: Props) {
           <div className="boss-list">
             {bosses.map((b) => (
               <button
-                key={`${b.tier}-${b.speciesId}`}
+                key={`${b.tier}-${b.speciesId}-${b.megaId ?? ''}`}
                 className="boss card"
                 aria-pressed={isSelected(b)}
                 onClick={() => onSelect(b)}
               >
                 <span className="grow">
-                  <strong>{speciesName(b.speciesId)}</strong>
+                  <strong>{bossName(b)}</strong>
                   <span className="types" style={{ marginTop: 4 }}>
-                    {getSpecies(b.speciesId).types.map((t) => (
+                    {buildBoss(b).types.map((t) => (
                       <TypeChip key={t} type={t} />
                     ))}
                   </span>
@@ -78,6 +80,40 @@ export function BossPicker({ selected, onSelect, onChangeMoves }: Props) {
 
       {selected && <BossMoveset boss={selected} onChange={onChangeMoves} />}
     </>
+  );
+}
+
+/**
+ * Pulls the live rotation.
+ *
+ * Its own component so a failed fetch reports itself in place — the boss list
+ * you already have keeps working, which is the whole point of shipping one
+ * with the build.
+ */
+function RefreshButton({ onRefresh }: { onRefresh: () => Promise<void> }) {
+  const [state, setState] = useState<'idle' | 'busy'>('idle');
+  const [error, setError] = useState<string | null>(null);
+
+  return (
+    <span style={{ textAlign: 'right' }}>
+      <button
+        disabled={state === 'busy'}
+        onClick={async () => {
+          setState('busy');
+          setError(null);
+          try {
+            await onRefresh();
+          } catch (e) {
+            setError(e instanceof Error ? e.message : 'Refresh failed.');
+          } finally {
+            setState('idle');
+          }
+        }}
+      >
+        {state === 'busy' ? 'Refreshing…' : 'Refresh'}
+      </button>
+      {error && <div className="small" style={{ color: 'var(--bad)', marginTop: 4 }}>{error}</div>}
+    </span>
   );
 }
 

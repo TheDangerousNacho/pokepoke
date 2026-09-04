@@ -23,7 +23,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # 24+: fetch-bosses.ts is TypeScript, run directly by Node's type
+          # stripping so it can share the rotation parser with the app.
+          node-version: 24
           cache: npm
 
       - run: npm ci

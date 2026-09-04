@@ -14,6 +14,9 @@ interface Props {
 }
 
 const LEVELS = Array.from({ length: 99 }, (_, i) => 1 + i * 0.5);
+
+/** Sentinel for the second charged move being unset, since "" is a valid id. */
+const NONE = 'none';
 const IVS = Array.from({ length: 16 }, (_, i) => i);
 
 function defaultEntry(speciesId: string): StoredPokemon {
@@ -45,6 +48,13 @@ function EntryCard({ entry, onChange, onRemove }: {
   const cp = combatPower(species, entry.ivs, entry.level);
 
   const set = (patch: Partial<StoredPokemon>) => onChange({ ...entry, ...patch });
+
+  // Picking the move already in the second slot means the two were reordered,
+  // not that one was discarded — keep both rather than silently dropping one.
+  const setChargedMove = (chargedMove: string) =>
+    set(chargedMove === entry.chargedMove2
+      ? { chargedMove, chargedMove2: entry.chargedMove }
+      : { chargedMove });
   const setIv = (k: keyof RosterEntry['ivs'], v: number) =>
     onChange({ ...entry, ivs: { ...entry.ivs, [k]: v } });
 
@@ -112,10 +122,23 @@ function EntryCard({ entry, onChange, onRemove }: {
         </div>
         <div className="field">
           <label>Charged move</label>
-          <select value={entry.chargedMove} onChange={(e) => set({ chargedMove: e.target.value })}>
+          <select value={entry.chargedMove} onChange={(e) => setChargedMove(e.target.value)}>
             {chargedMoves.map((m) => <option key={m} value={m}>{moveName(m)}</option>)}
           </select>
         </div>
+      </div>
+
+      <div className="field" style={{ marginTop: 8 }}>
+        <label>Second charged move</label>
+        <select
+          value={entry.chargedMove2 ?? NONE}
+          onChange={(e) => set({ chargedMove2: e.target.value === NONE ? undefined : e.target.value })}
+        >
+          <option value={NONE}>Not unlocked</option>
+          {chargedMoves
+            .filter((m) => m !== entry.chargedMove)
+            .map((m) => <option key={m} value={m}>{moveName(m)}</option>)}
+        </select>
       </div>
     </div>
   );

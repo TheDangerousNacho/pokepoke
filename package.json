@@ -13,7 +13,7 @@
     "test:watch": "vitest",
     "build:gm": "node scripts/build-gamemaster.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "fetch:bosses": "node scripts/fetch-bosses.mjs",
+    "fetch:bosses": "node scripts/fetch-bosses.ts",
     "make:icons": "node scripts/make-icons.mjs",
     "prepare:ocr": "node scripts/prepare-ocr.mjs"
   },

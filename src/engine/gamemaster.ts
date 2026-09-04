@@ -1,4 +1,4 @@
-import packed from '../data/gamemaster.json';
+import packed from '../data/gamemaster.json' with { type: 'json' };
 import type { GameMaster, MegaForm, Move, PokemonType, Rarity, Species, WeatherCondition } from './types';
 
 /**

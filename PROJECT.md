@@ -71,7 +71,7 @@ the first scan pays, and later ones work offline too.
 
 Disabled in dev — a service worker caching a dev server is a debugging trap.
 
-## Keeping the rotation fresh
+## Keeping the rotation fresh — REFRESHES ITSELF NOW
 
 `.github/workflows/refresh-rotation.yml` runs `fetch:bosses` and `fetch:tiers`
 weekly, commits only if something changed, and then explicitly calls the deploy
@@ -81,6 +81,26 @@ not trigger other workflows, so a naive refresh would commit and never ship.
 The **game master is deliberately not refreshed** by this job. It is pinned to
 a commit and bumping it can move every damage number in the app, which deserves
 a human reading the test results rather than a cron job.
+
+**The app can also refresh itself.** Pokebattler serves `/raids` with
+`access-control-allow-origin: *`, so the browser can fetch it directly — the
+**Refresh** button on the Boss tab does, and stores the result in
+localStorage. The rotation shipped with the build is the fallback, and a
+stored one is used *only when it is newer*, so publishing a fresh build is
+never undone by a stale refresh sitting in a phone's storage. A failed fetch
+reports itself in place and changes nothing.
+
+The parsing lives in `src/data/rotation.ts` and is shared: the build script
+(`scripts/fetch-bosses.ts`) and the app run the same code, so a form-naming
+quirk is fixed once. The script is TypeScript run directly by Node's type
+stripping, which is why the workflow pins Node 24.
+
+This immediately paid for itself. The live rotation now has **Mega Raichu X
+and Mega Raichu Y**, and three separate things were wrong with how they were
+displayed: the boss list used the base species name (two identical "Raichu"
+buttons), it used the base species' *types* (Mega Gyarados showed Water/Flying
+rather than Water/Dark), and the React key and selection check both ignored
+`megaId`, so the two forms were the same boss as far as the UI was concerned.
 
 ## Data sources
 
@@ -623,3 +643,34 @@ Pokémon GO does not implement, but the dump marks them `isDeployable` and
 `BATTLE_ONLY_FORMS` is a judgement call, deliberately limited to forms that
 actually rank highly enough to be suggested. If GO ever releases one, delete
 it from the set.
+
+
+### A second charged move — BUILT
+
+`RosterEntry.chargedMove2`, set on the Roster tab. It exists because the TMs
+tab recommended swapping an Annihilape to Shadow Ball when it already knew
+both that and Close Combat.
+
+**It is not modelled as extra damage in one fight.** A second charged move
+does not make a Pokémon hit harder — you would just use the better move — it
+makes the same Pokémon the right answer to more fights. So
+`withBestChargedMove` puts whichever move suits *this* boss in the leading
+slot, and everything downstream keeps treating an entry as having one charged
+move. The choice uses closed-form cycle DPS rather than a simulation: both
+candidates share a Pokémon, a level and a boss, so the ranking does not need
+what a simulation adds.
+
+For TM advice this changes three things: a move you already know can never
+cost a TM, the baseline you are rated against is the better of your two moves,
+and a legacy move is only "lost" when *every* charged move you know is legacy —
+with two slots you would overwrite the ordinary one.
+
+**One trap, caught by a test.** `evaluateUpgrades` rates candidate movesets by
+building a variant entry, and those variants inherited `chargedMove2` — so
+every candidate was silently rescued by the second slot and they all scored
+identically. Candidate ratings now drop the second move, because the question
+is what *that moveset* does.
+
+Unlocking a second charged move costs candy and stardust and is not yet
+recommended anywhere — the tool records that you have one, it does not tell
+you to buy one.

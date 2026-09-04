@@ -146,3 +146,40 @@ describe('rankUpgrades', () => {
     expect(two.gain / two.eliteTms).toBeCloseTo(two.gainPerEliteTm, 6);
   });
 });
+
+describe('a second charged move', () => {
+  /** Annihilape knows both Close Combat and Shadow Ball. */
+  const both = {
+    speciesId: 'ANNIHILAPE',
+    level: 40,
+    ivs: { attack: 15, defense: 15, stamina: 15 },
+    fastMove: 'COUNTER_FAST',
+    chargedMove: 'CLOSE_COMBAT',
+    chargedMove2: 'SHADOW_BALL',
+  };
+  const ghostBoss: RaidBossSpec = {
+    speciesId: 'GIRATINA', tier: '5', fastMove: 'SHADOW_CLAW_FAST', chargedMove: 'DRAGON_CLAW',
+  };
+
+  it('never advises a TM for a move already known', () => {
+    const u = evaluateUpgrades(both, [ghostBoss]);
+    expect(u.changes).not.toContain('charged');
+    expect(u.best.eliteSpend).toBe(0);
+  });
+
+  it('rates the Pokémon on the better of its two moves', () => {
+    const onlyCloseCombat = { ...both, chargedMove2: undefined };
+    const withBoth = evaluateUpgrades(both, [ghostBoss]);
+    const without = evaluateUpgrades(onlyCloseCombat, [ghostBoss]);
+    // Shadow Ball is the right move against a Ghost boss, so knowing it should
+    // raise the baseline rather than show up as an upgrade to buy.
+    expect(withBoth.current.dps).toBeGreaterThan(without.current.dps);
+    expect(withBoth.gain).toBeLessThan(without.gain);
+  });
+
+  it('reports the move it is not currently using', () => {
+    const u = evaluateUpgrades(both, [ghostBoss]);
+    expect(u.current.chargedMove).toBe('SHADOW_BALL');
+    expect(u.alsoKnows).toEqual(['CLOSE_COMBAT']);
+  });
+});

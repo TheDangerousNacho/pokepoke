@@ -1,7 +1,7 @@
 import { damage, energyFromDamageTaken, type BattleConditions } from './damage';
 import { gm, getMove } from './gamemaster';
 import { getTier } from './raidTiers';
-import { buildAttacker, buildBoss, type Combatant, type RaidBossSpec, type RosterEntry } from './stats';
+import { buildAttacker, buildBoss, withBestChargedMove, type Combatant, type RaidBossSpec, type RosterEntry } from './stats';
 
 export interface SimOptions {
   conditions?: BattleConditions;
@@ -94,7 +94,8 @@ export function simulateParty(
   const timerMs = tier.timerSeconds * 1000;
   const boss = buildBoss(bossSpec);
 
-  const roster = party.map(buildAttacker);
+  // Each Pokémon fights with whichever of its charged moves suits this boss.
+  const roster = party.map((e) => buildAttacker(withBestChargedMove(e, boss.types)));
   let slot = 0;
   let player = makeActor(roster[slot], 0);
   const bossActor = makeActor(boss, gm.settings.enemyAttackIntervalS * 1000);
@@ -235,8 +236,11 @@ export function rateAttacker(
   bossSpec: RaidBossSpec,
   options: SimOptions = {},
 ): AttackerRating {
-  const sim = simulateParty([entry], bossSpec, { ...options, relobbyMs: Number.MAX_SAFE_INTEGER });
-  const attacker = buildAttacker(entry);
+  // Resolved here as well as inside the simulation, so the rating names the
+  // move this Pokémon actually used rather than whichever slot it is stored in.
+  const used = withBestChargedMove(entry, buildBoss(bossSpec).types);
+  const sim = simulateParty([used], bossSpec, { ...options, relobbyMs: Number.MAX_SAFE_INTEGER });
+  const attacker = buildAttacker(used);
 
   // With no relobby the run ends at the first faint. Survival time is the
   // FIRST moment the damage total was reached, not the last sample carrying
@@ -245,10 +249,10 @@ export function rateAttacker(
   const survivalMs = sim.deaths > 0 && reached ? reached.timeMs : sim.timerMs;
 
   return {
-    speciesId: entry.speciesId,
+    speciesId: used.speciesId,
     name: attacker.name,
-    fastMove: entry.fastMove,
-    chargedMove: entry.chargedMove,
+    fastMove: used.fastMove,
+    chargedMove: used.chargedMove,
     dps: sim.totalDamage / (survivalMs / 1000),
     tdo: sim.totalDamage,
     survivalSeconds: survivalMs / 1000,

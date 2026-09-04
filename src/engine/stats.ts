@@ -1,4 +1,5 @@
 import { cpm } from './cpm';
+import { cycleDps, referenceDefender } from './moveset';
 import { gm, getSpecies } from './gamemaster';
 import { BOSS_IV_ATTACK, BOSS_IV_DEFENSE, getTier, type RaidTier } from './raidTiers';
 import type { PokemonType, Species } from './types';
@@ -17,6 +18,11 @@ export interface RosterEntry {
   ivs: IVs;
   fastMove: string;
   chargedMove: string;
+  /**
+   * The second charged move, once unlocked. Optional because most Pokémon do
+   * not have one, and because it is not something a screenshot scan can read.
+   */
+  chargedMove2?: string;
   isShadow?: boolean;
   /** Mega form id (e.g. `TEMP_EVOLUTION_MEGA_X`) when this Pokémon is megaed. */
   megaId?: string;
@@ -62,6 +68,34 @@ export function buildAttacker(entry: RosterEntry): Combatant {
     chargedMove: entry.chargedMove,
     isShadow: shadow,
   };
+}
+
+/**
+ * The same Pokémon with whichever of its charged moves is better against this
+ * defender in the leading slot.
+ *
+ * A second charged move does not make a Pokémon hit harder in one fight — you
+ * would just use the better move — it makes the same Pokémon the right answer
+ * to more fights. Resolving it here is what lets every caller keep treating an
+ * entry as having one charged move.
+ *
+ * The choice uses the closed-form cycle DPS rather than a full simulation:
+ * both candidates share a Pokémon, a level and a boss, so the ranking does not
+ * need the parts a simulation adds.
+ */
+export function withBestChargedMove(entry: RosterEntry, defenderTypes: PokemonType[]): RosterEntry {
+  if (!entry.chargedMove2 || entry.chargedMove2 === entry.chargedMove) return entry;
+
+  const built = buildAttacker(entry);
+  const attacker = { attack: built.attack, types: built.types };
+  const defender = referenceDefender(defenderTypes);
+
+  const first = cycleDps(attacker, defender, entry.fastMove, entry.chargedMove);
+  const second = cycleDps(attacker, defender, entry.fastMove, entry.chargedMove2);
+
+  return second > first
+    ? { ...entry, chargedMove: entry.chargedMove2, chargedMove2: entry.chargedMove }
+    : entry;
 }
 
 /** A raid boss in the current rotation. */

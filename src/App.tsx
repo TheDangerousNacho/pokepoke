@@ -16,6 +16,7 @@ import { Results } from './ui/Results';
 import { RosterEditor } from './ui/RosterEditor';
 import { ScanTab } from './ui/ScanTab';
 import { Upgrades } from './ui/Upgrades';
+import { loadRotation, refreshRotation, type Rotation } from './storage/rotation';
 import { bossName, speciesName } from './ui/format';
 
 type Tab = 'boss' | 'roster' | 'scan' | 'results' | 'upgrades';
@@ -44,6 +45,7 @@ export default function App() {
   const [undo, setUndo] = useState<{ label: string; store: ProfileStore } | null>(null);
   const [tab, setTab] = useState<Tab>('boss');
   const [boss, setBoss] = useState<BossListEntry | null>(null);
+  const [rotation, setRotation] = useState<Rotation>(loadRotation);
   const [weather, setWeather] = useState<WeatherCondition | 'NONE'>('NONE');
   const [friendship, setFriendship] = useState(0);
 
@@ -84,6 +86,8 @@ export default function App() {
       {tab === 'boss' && (
         <>
           <BossPicker
+            rotation={rotation}
+            onRefresh={async () => setRotation(await refreshRotation())}
             selected={boss}
             onSelect={(b) => setBoss(b)}
             onChangeMoves={(b) => setBoss(b)}
@@ -156,7 +160,12 @@ export default function App() {
       )}
 
       {tab === 'upgrades' && (
-        <Upgrades roster={profile.roster} selectedBoss={boss} conditions={conditions} />
+        <Upgrades
+          roster={profile.roster}
+          rotation={rotation.bosses}
+          selectedBoss={boss}
+          conditions={conditions}
+        />
       )}
 
       {undo && (

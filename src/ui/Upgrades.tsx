@@ -4,11 +4,13 @@ import type { BattleConditions } from '../engine/damage';
 import type { RaidBossSpec, RosterEntry } from '../engine/stats';
 import { rankUpgrades, type MoveUpgrade } from '../engine/upgrades';
 import { BenchGaps } from './BenchGaps';
-import { BOSSES, type BossListEntry } from './BossPicker';
+import type { BossListEntry } from './BossPicker';
 import { bossName, moveName, speciesName } from './format';
 
 interface Props {
   roster: RosterEntry[];
+  /** The current rotation, so TM advice tracks the bosses you can fight now. */
+  rotation: RaidBossSpec[];
   /** The boss selected on the Boss tab, if any. */
   selectedBoss: BossListEntry | null;
   conditions: BattleConditions;
@@ -19,14 +21,14 @@ type Target = 'rotation' | 'selected';
 /** Tier 5 and mega bosses are what a TM decision is usually about. */
 const HARD_TIERS = new Set(['5', '6', 'MEGA', 'MEGA_LEGENDARY', 'ELITE', 'SHADOW_5']);
 
-export function Upgrades({ roster, selectedBoss, conditions }: Props) {
+export function Upgrades({ roster, rotation, selectedBoss, conditions }: Props) {
   const [target, setTarget] = useState<Target>('rotation');
 
   const bosses = useMemo<RaidBossSpec[]>(() => {
     if (target === 'selected' && selectedBoss) return [selectedBoss];
-    const hard = BOSSES.filter((b) => HARD_TIERS.has(b.tier));
-    return (hard.length > 0 ? hard : BOSSES) as RaidBossSpec[];
-  }, [target, selectedBoss]);
+    const hard = rotation.filter((b) => HARD_TIERS.has(b.tier));
+    return hard.length > 0 ? hard : rotation;
+  }, [target, selectedBoss, rotation]);
 
   const { value: upgrades, pending } = useDeferredCompute(
     () => (roster.length > 0 && bosses.length > 0 ? rankUpgrades(roster, bosses, { conditions }) : []),
@@ -45,7 +47,7 @@ export function Upgrades({ roster, selectedBoss, conditions }: Props) {
           <label htmlFor="target">Rate against</label>
           <select id="target" value={target} onChange={(e) => setTarget(e.target.value as Target)}>
             <option value="rotation">
-              Current hard raids ({bosses.length > 0 ? bosses.map((b) => speciesName(b.speciesId)).join(', ') : 'none'})
+              Current hard raids ({bosses.length > 0 ? bosses.map(bossName).join(', ') : 'none'})
             </option>
             <option value="selected" disabled={!selectedBoss}>
               {selectedBoss ? `Just ${bossName(selectedBoss)}` : 'Pick a boss first'}
@@ -96,8 +98,15 @@ function UpgradeCard({ upgrade: u }: { upgrade: MoveUpgrade }) {
         <tbody>
           <tr>
             <td style={{ borderTop: 'none' }}>
-              <div className="small muted">Now</div>
+              <div className="small muted">
+                Now{u.alsoKnows.length > 0 && ' · best of both charged moves'}
+              </div>
               <div>{moveName(u.current.fastMove)} · {moveName(u.current.chargedMove)}</div>
+              {u.alsoKnows.length > 0 && (
+                <div className="small muted">
+                  also knows {u.alsoKnows.map(moveName).join(', ')}
+                </div>
+              )}
             </td>
             <td className="mono" style={{ borderTop: 'none' }}>{u.current.dps.toFixed(1)}</td>
           </tr>

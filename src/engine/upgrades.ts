@@ -40,6 +40,8 @@ export interface MoveUpgrade {
   losesLegacyMove: boolean;
   /** DPS gain per Elite TM spent — the number that ranks a scarce resource. */
   gainPerEliteTm: number;
+  /** Charged moves this Pokémon knows but is not using for these bosses. */
+  alsoKnows: string[];
 }
 
 /**
@@ -110,6 +112,12 @@ export function evaluateUpgrades(
   const isEliteFast = (m: string) => !fastPool.includes(m);
   const isEliteCharged = (m: string) => !chargedPool.includes(m);
 
+  // A Pokémon with a second charged move already owns both. Nothing here may
+  // charge a TM for a move it already knows, or call a move it already knows
+  // a "change".
+  const knownCharged = [entry.chargedMove, entry.chargedMove2].filter(Boolean) as string[];
+  const knows = (m: string) => knownCharged.includes(m);
+
   /**
    * Elite TMs that would actually be spent getting from the current moveset to
    * this one. A legacy move the Pokémon already knows is free to keep, so this
@@ -117,12 +125,16 @@ export function evaluateUpgrades(
    */
   const spendFor = (fastMove: string, chargedMove: string) =>
     (fastMove !== entry.fastMove && isEliteFast(fastMove) ? 1 : 0) +
-    (chargedMove !== entry.chargedMove && isEliteCharged(chargedMove) ? 1 : 0);
+    (!knows(chargedMove) && isEliteCharged(chargedMove) ? 1 : 0);
 
+  // `chargedMove2` is dropped deliberately: rating a candidate moveset must
+  // measure that moveset, not the better of it and whatever else the Pokémon
+  // happens to know, or every candidate would be quietly rescued by the second
+  // slot and the comparison would mean nothing.
   const rate = (fastMove: string, chargedMove: string): MovesetRating => ({
     fastMove,
     chargedMove,
-    ...rateAcross({ ...entry, fastMove, chargedMove }, bosses, options),
+    ...rateAcross({ ...entry, fastMove, chargedMove, chargedMove2: undefined }, bosses, options),
     containsEliteMove: isEliteFast(fastMove) || isEliteCharged(chargedMove),
     eliteSpend: spendFor(fastMove, chargedMove),
   });
@@ -135,7 +147,11 @@ export function evaluateUpgrades(
   // that perform identically should never be presented as needing an Elite TM.
   all.sort((a, b) => b.dps - a.dps || a.eliteSpend - b.eliteSpend);
 
-  const current = rate(entry.fastMove, entry.chargedMove);
+  // With two charged moves the honest baseline is the better of them: you
+  // would already be using it, so an "upgrade" to it is not an upgrade.
+  const current = knownCharged
+    .map((chargedMove) => rate(entry.fastMove, chargedMove))
+    .sort((a, b) => b.dps - a.dps)[0];
   const withoutElite = all.find((m) => m.eliteSpend === 0) ?? null;
 
   // Only reach for an Elite TM when it buys a real margin over the free option.
@@ -149,7 +165,7 @@ export function evaluateUpgrades(
 
   const changes: Array<'fast' | 'charged'> = [];
   if (best.fastMove !== current.fastMove) changes.push('fast');
-  if (best.chargedMove !== current.chargedMove) changes.push('charged');
+  if (!knows(best.chargedMove)) changes.push('charged');
 
   const eliteTms = best.eliteSpend;
 
@@ -158,7 +174,7 @@ export function evaluateUpgrades(
     expectedRegularTms += expectedRerolls(fastPool.length, !isEliteFast(current.fastMove));
   }
   if (changes.includes('charged') && !isEliteCharged(best.chargedMove)) {
-    expectedRegularTms += expectedRerolls(chargedPool.length, !isEliteCharged(current.chargedMove));
+    expectedRegularTms += expectedRerolls(chargedPool.length, knownCharged.some((m) => !isEliteCharged(m)));
   }
 
   const gain = current.dps > 0 ? best.dps / current.dps - 1 : 0;
@@ -181,10 +197,13 @@ export function evaluateUpgrades(
     changes,
     // Rewriting a legacy move needs another Elite TM to undo, so it is worth
     // saying out loud even when the swap is an improvement.
+    // Only a real loss when every charged move on the books is legacy — with a
+    // second slot you would overwrite the ordinary one and keep the legacy.
     losesLegacyMove:
       (changes.includes('fast') && isEliteFast(current.fastMove)) ||
-      (changes.includes('charged') && isEliteCharged(current.chargedMove)),
+      (changes.includes('charged') && knownCharged.every(isEliteCharged)),
     gainPerEliteTm: eliteTms > 0 ? gain / eliteTms : gain,
+    alsoKnows: knownCharged.filter((m) => m !== current.chargedMove),
   };
 }
 

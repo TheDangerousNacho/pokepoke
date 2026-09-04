@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-03T01:03:57.876Z",
+  "fetchedAt": "2026-09-04T14:42:42.623Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
@@ -81,20 +81,20 @@
       "chargedMove": "HYDRO_PUMP"
     },
     {
-      "speciesId": "SKARMORY",
-      "megaId": "TEMP_EVOLUTION_MEGA",
+      "speciesId": "RAICHU",
+      "megaId": "TEMP_EVOLUTION_MEGA_X",
       "tier": "MEGA",
       "shiny": true,
-      "fastMove": "STEEL_WING_FAST",
-      "chargedMove": "BRAVE_BIRD"
+      "fastMove": "VOLT_SWITCH_FAST",
+      "chargedMove": "BRICK_BREAK"
     },
     {
-      "speciesId": "STARMIE",
-      "megaId": "TEMP_EVOLUTION_MEGA",
+      "speciesId": "RAICHU",
+      "megaId": "TEMP_EVOLUTION_MEGA_Y",
       "tier": "MEGA",
       "shiny": true,
-      "fastMove": "HIDDEN_POWER_FAST",
-      "chargedMove": "HYDRO_PUMP"
+      "fastMove": "VOLT_SWITCH_FAST",
+      "chargedMove": "BRICK_BREAK"
     },
     {
       "speciesId": "LATIAS",
