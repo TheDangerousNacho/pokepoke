@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-04T14:48:42.569Z",
+  "fetchedAt": "2026-09-07T17:32:41.469Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
@@ -73,12 +73,68 @@
       "chargedMove": "FLASH_CANNON"
     },
     {
+      "speciesId": "ALTARIA",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "PECK_FAST",
+      "chargedMove": "SKY_ATTACK"
+    },
+    {
+      "speciesId": "BEEDRILL",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "INFESTATION_FAST",
+      "chargedMove": "SLUDGE_BOMB"
+    },
+    {
+      "speciesId": "DRAGONITE",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "HURRICANE"
+    },
+    {
+      "speciesId": "FALINKS",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "ROCK_SMASH_FAST",
+      "chargedMove": "SUPER_POWER"
+    },
+    {
+      "speciesId": "GLALIE",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "ICE_SHARD_FAST",
+      "chargedMove": "AVALANCHE"
+    },
+    {
       "speciesId": "GYARADOS",
       "megaId": "TEMP_EVOLUTION_MEGA",
       "tier": "MEGA",
       "shiny": true,
       "fastMove": "BITE_FAST",
       "chargedMove": "HYDRO_PUMP"
+    },
+    {
+      "speciesId": "MAWILE",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": false,
+      "fastMove": "BITE_FAST",
+      "chargedMove": "PLAY_ROUGH"
+    },
+    {
+      "speciesId": "MEDICHAM",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "PSYCHO_CUT_FAST",
+      "chargedMove": "ICE_PUNCH"
     },
     {
       "speciesId": "RAICHU",
@@ -97,20 +153,12 @@
       "chargedMove": "BRICK_BREAK"
     },
     {
-      "speciesId": "LATIAS",
+      "speciesId": "SKARMORY",
       "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA_LEGENDARY",
+      "tier": "MEGA",
       "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "PSYCHIC"
-    },
-    {
-      "speciesId": "LATIOS",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA_LEGENDARY",
-      "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "PSYCHIC"
+      "fastMove": "STEEL_WING_FAST",
+      "chargedMove": "BRAVE_BIRD"
     },
     {
       "speciesId": "HITMONTOP",
