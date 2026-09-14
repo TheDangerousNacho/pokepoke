@@ -1,84 +1,62 @@
 {
-  "fetchedAt": "2026-09-07T17:32:41.469Z",
+  "fetchedAt": "2026-09-14T17:55:01.164Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
-      "speciesId": "AMAURA",
+      "speciesId": "DUNSPARCE",
       "tier": "1",
       "shiny": true,
-      "fastMove": "POWDER_SNOW_FAST",
-      "chargedMove": "WEATHER_BALL_ICE"
+      "fastMove": "BITE_FAST",
+      "chargedMove": "DIG"
     },
     {
-      "speciesId": "DRATINI",
+      "speciesId": "FIDOUGH",
       "tier": "1",
       "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "WRAP"
+      "fastMove": "CHARM_FAST",
+      "chargedMove": "BODY_SLAM"
     },
     {
-      "speciesId": "HONEDGE",
+      "speciesId": "RATTATA_ALOLA",
       "tier": "1",
       "shiny": true,
-      "fastMove": "PSYCHO_CUT_FAST",
-      "chargedMove": "IRON_HEAD"
+      "fastMove": "TACKLE_FAST",
+      "chargedMove": "CRUNCH"
     },
     {
-      "speciesId": "TYRUNT",
+      "speciesId": "SCRAGGY",
       "tier": "1",
       "shiny": true,
-      "fastMove": "DRAGON_TAIL_FAST",
-      "chargedMove": "STOMP"
+      "fastMove": "ROCK_SMASH_FAST",
+      "chargedMove": "ACID_SPRAY"
     },
     {
-      "speciesId": "LILLIGANT_HISUIAN",
+      "speciesId": "DUGTRIO_ALOLA",
       "tier": "3",
       "shiny": true,
-      "fastMove": "MAGICAL_LEAF_FAST",
-      "chargedMove": "PETAL_BLIZZARD"
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "EARTHQUAKE"
     },
     {
-      "speciesId": "PASSIMIAN",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "COUNTER_FAST",
-      "chargedMove": "BRICK_BREAK"
-    },
-    {
-      "speciesId": "SNEASEL_HISUIAN",
+      "speciesId": "FALINKS",
       "tier": "3",
       "shiny": true,
       "fastMove": "ROCK_SMASH_FAST",
-      "chargedMove": "AERIAL_ACE"
+      "chargedMove": "SUPER_POWER"
     },
     {
-      "speciesId": "REGICE",
-      "tier": "5",
+      "speciesId": "LAPRAS",
+      "tier": "3",
       "shiny": true,
       "fastMove": "FROST_BREATH_FAST",
-      "chargedMove": "BLIZZARD"
+      "chargedMove": "HYDRO_PUMP"
     },
     {
-      "speciesId": "REGIROCK",
-      "tier": "5",
-      "shiny": true,
-      "fastMove": "ROCK_THROW_FAST",
-      "chargedMove": "STONE_EDGE"
-    },
-    {
-      "speciesId": "REGISTEEL",
+      "speciesId": "ZACIAN_HERO",
       "tier": "5",
       "shiny": true,
       "fastMove": "METAL_CLAW_FAST",
-      "chargedMove": "FLASH_CANNON"
-    },
-    {
-      "speciesId": "ALTARIA",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "PECK_FAST",
-      "chargedMove": "SKY_ATTACK"
+      "chargedMove": "PLAY_ROUGH"
     },
     {
       "speciesId": "BEEDRILL",
@@ -89,83 +67,12 @@
       "chargedMove": "SLUDGE_BOMB"
     },
     {
-      "speciesId": "DRAGONITE",
+      "speciesId": "HOUNDOOM",
       "megaId": "TEMP_EVOLUTION_MEGA",
       "tier": "MEGA",
       "shiny": true,
-      "fastMove": "DRAGON_TAIL_FAST",
-      "chargedMove": "HURRICANE"
-    },
-    {
-      "speciesId": "FALINKS",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "ROCK_SMASH_FAST",
-      "chargedMove": "SUPER_POWER"
-    },
-    {
-      "speciesId": "GLALIE",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "ICE_SHARD_FAST",
-      "chargedMove": "AVALANCHE"
-    },
-    {
-      "speciesId": "GYARADOS",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "BITE_FAST",
-      "chargedMove": "HYDRO_PUMP"
-    },
-    {
-      "speciesId": "MAWILE",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": false,
-      "fastMove": "BITE_FAST",
-      "chargedMove": "PLAY_ROUGH"
-    },
-    {
-      "speciesId": "MEDICHAM",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "PSYCHO_CUT_FAST",
-      "chargedMove": "ICE_PUNCH"
-    },
-    {
-      "speciesId": "RAICHU",
-      "megaId": "TEMP_EVOLUTION_MEGA_X",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "VOLT_SWITCH_FAST",
-      "chargedMove": "BRICK_BREAK"
-    },
-    {
-      "speciesId": "RAICHU",
-      "megaId": "TEMP_EVOLUTION_MEGA_Y",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "VOLT_SWITCH_FAST",
-      "chargedMove": "BRICK_BREAK"
-    },
-    {
-      "speciesId": "SKARMORY",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "STEEL_WING_FAST",
-      "chargedMove": "BRAVE_BIRD"
-    },
-    {
-      "speciesId": "HITMONTOP",
-      "tier": "SHADOW_3",
-      "shiny": true,
-      "fastMove": "ROCK_SMASH_FAST",
-      "chargedMove": "CLOSE_COMBAT"
+      "fastMove": "SNARL_FAST",
+      "chargedMove": "CRUNCH"
     },
     {
       "speciesId": "LAMPENT",
@@ -175,18 +82,25 @@
       "chargedMove": "ENERGY_BALL"
     },
     {
-      "speciesId": "SNORLAX",
+      "speciesId": "QUAGSIRE",
       "tier": "SHADOW_3",
       "shiny": true,
-      "fastMove": "ZEN_HEADBUTT_FAST",
-      "chargedMove": "HEAVY_SLAM"
+      "fastMove": "WATER_GUN_FAST",
+      "chargedMove": "SLUDGE_BOMB"
     },
     {
-      "speciesId": "GIRATINA",
+      "speciesId": "SANDSLASH_ALOLA",
+      "tier": "SHADOW_3",
+      "shiny": true,
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "BLIZZARD"
+    },
+    {
+      "speciesId": "THUNDURUS",
       "tier": "SHADOW_5",
       "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "DRAGON_CLAW"
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "CRUNCH"
     }
   ]
 }
