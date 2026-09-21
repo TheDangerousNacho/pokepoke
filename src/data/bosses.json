@@ -1,78 +1,64 @@
 {
-  "fetchedAt": "2026-09-14T17:55:01.164Z",
+  "fetchedAt": "2026-09-21T18:01:53.565Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
-      "speciesId": "DUNSPARCE",
+      "speciesId": "PIKACHU",
       "tier": "1",
       "shiny": true,
-      "fastMove": "BITE_FAST",
-      "chargedMove": "DIG"
+      "fastMove": "THUNDER_SHOCK_FAST",
+      "chargedMove": "DISCHARGE"
     },
     {
-      "speciesId": "FIDOUGH",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "CHARM_FAST",
-      "chargedMove": "BODY_SLAM"
-    },
-    {
-      "speciesId": "RATTATA_ALOLA",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "TACKLE_FAST",
-      "chargedMove": "CRUNCH"
-    },
-    {
-      "speciesId": "SCRAGGY",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "ROCK_SMASH_FAST",
-      "chargedMove": "ACID_SPRAY"
-    },
-    {
-      "speciesId": "DUGTRIO_ALOLA",
+      "speciesId": "CHARIZARD",
       "tier": "3",
       "shiny": true,
-      "fastMove": "METAL_CLAW_FAST",
-      "chargedMove": "EARTHQUAKE"
+      "fastMove": "FIRE_SPIN_FAST",
+      "chargedMove": "FIRE_BLAST"
     },
     {
-      "speciesId": "FALINKS",
+      "speciesId": "MEOWSCARADA",
       "tier": "3",
       "shiny": true,
-      "fastMove": "ROCK_SMASH_FAST",
-      "chargedMove": "SUPER_POWER"
+      "fastMove": "LEAFAGE_FAST",
+      "chargedMove": "GRASS_KNOT"
     },
     {
-      "speciesId": "LAPRAS",
+      "speciesId": "QUAQUAVAL",
       "tier": "3",
       "shiny": true,
-      "fastMove": "FROST_BREATH_FAST",
-      "chargedMove": "HYDRO_PUMP"
+      "fastMove": "WATER_GUN_FAST",
+      "chargedMove": "AQUA_JET"
     },
     {
-      "speciesId": "ZACIAN_HERO",
+      "speciesId": "SKELEDIRGE",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "INCINERATE_FAST",
+      "chargedMove": "FLAMETHROWER"
+    },
+    {
+      "speciesId": "ZAMAZENTA_HERO",
       "tier": "5",
       "shiny": true,
       "fastMove": "METAL_CLAW_FAST",
-      "chargedMove": "PLAY_ROUGH"
+      "chargedMove": "MOONBLAST"
     },
     {
-      "speciesId": "BEEDRILL",
+      "speciesId": "MALAMAR",
       "megaId": "TEMP_EVOLUTION_MEGA",
       "tier": "MEGA",
       "shiny": true,
-      "fastMove": "INFESTATION_FAST",
+      "fastMove": "PECK_FAST",
+      "chargedMove": "PSYBEAM"
+    },
+    {
+      "speciesId": "VENUSAUR",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "RAZOR_LEAF_FAST",
       "chargedMove": "SLUDGE_BOMB"
-    },
-    {
-      "speciesId": "HOUNDOOM",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "SNARL_FAST",
-      "chargedMove": "CRUNCH"
     },
     {
       "speciesId": "LAMPENT",
