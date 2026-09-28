@@ -1,7 +1,35 @@
 {
-  "fetchedAt": "2026-09-21T18:01:53.565Z",
+  "fetchedAt": "2026-09-28T19:25:39.574Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
+    {
+      "speciesId": "BAGON",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "BITE_FAST",
+      "chargedMove": "FLAMETHROWER"
+    },
+    {
+      "speciesId": "DEINO",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "TACKLE_FAST",
+      "chargedMove": "DRAGON_PULSE"
+    },
+    {
+      "speciesId": "DRATINI",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "WRAP"
+    },
+    {
+      "speciesId": "LARVITAR",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "BITE_FAST",
+      "chargedMove": "STOMP"
+    },
     {
       "speciesId": "PIKACHU",
       "tier": "1",
@@ -10,38 +38,31 @@
       "chargedMove": "DISCHARGE"
     },
     {
-      "speciesId": "CHARIZARD",
+      "speciesId": "DECIDUEYE_HISUIAN",
       "tier": "3",
       "shiny": true,
-      "fastMove": "FIRE_SPIN_FAST",
-      "chargedMove": "FIRE_BLAST"
+      "fastMove": "MAGICAL_LEAF_FAST",
+      "chargedMove": "TRAILBLAZE"
     },
     {
-      "speciesId": "MEOWSCARADA",
+      "speciesId": "SAMUROTT_HISUIAN",
       "tier": "3",
       "shiny": true,
-      "fastMove": "LEAFAGE_FAST",
-      "chargedMove": "GRASS_KNOT"
+      "fastMove": "WATERFALL_FAST",
+      "chargedMove": "RAZOR_SHELL"
     },
     {
-      "speciesId": "QUAQUAVAL",
+      "speciesId": "TYPHLOSION_HISUIAN",
       "tier": "3",
       "shiny": true,
-      "fastMove": "WATER_GUN_FAST",
-      "chargedMove": "AQUA_JET"
+      "fastMove": "HEX_FAST",
+      "chargedMove": "FIRE_PUNCH"
     },
     {
-      "speciesId": "SKELEDIRGE",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "INCINERATE_FAST",
-      "chargedMove": "FLAMETHROWER"
-    },
-    {
-      "speciesId": "ZAMAZENTA_HERO",
+      "speciesId": "XERNEAS",
       "tier": "5",
       "shiny": true,
-      "fastMove": "METAL_CLAW_FAST",
+      "fastMove": "TACKLE_FAST",
       "chargedMove": "MOONBLAST"
     },
     {
@@ -53,12 +74,12 @@
       "chargedMove": "PSYBEAM"
     },
     {
-      "speciesId": "VENUSAUR",
+      "speciesId": "VICTREEBEL",
       "megaId": "TEMP_EVOLUTION_MEGA",
       "tier": "MEGA",
       "shiny": true,
       "fastMove": "RAZOR_LEAF_FAST",
-      "chargedMove": "SLUDGE_BOMB"
+      "chargedMove": "LEAF_BLADE"
     },
     {
       "speciesId": "LAMPENT",
