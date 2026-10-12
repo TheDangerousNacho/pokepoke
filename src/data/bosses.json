@@ -1,113 +1,113 @@
 {
-  "fetchedAt": "2026-09-28T19:25:39.574Z",
+  "fetchedAt": "2026-10-12T21:04:35.614Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
-      "speciesId": "BAGON",
+      "speciesId": "AMAURA",
       "tier": "1",
       "shiny": true,
-      "fastMove": "BITE_FAST",
-      "chargedMove": "FLAMETHROWER"
+      "fastMove": "POWDER_SNOW_FAST",
+      "chargedMove": "WEATHER_BALL_ICE"
     },
     {
-      "speciesId": "DEINO",
+      "speciesId": "CLEFAIRY",
       "tier": "1",
       "shiny": true,
-      "fastMove": "TACKLE_FAST",
-      "chargedMove": "DRAGON_PULSE"
+      "fastMove": "POUND_FAST",
+      "chargedMove": "DISARMING_VOICE"
     },
     {
-      "speciesId": "DRATINI",
+      "speciesId": "ELGYEM",
       "tier": "1",
       "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "WRAP"
-    },
-    {
-      "speciesId": "LARVITAR",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "BITE_FAST",
-      "chargedMove": "STOMP"
-    },
-    {
-      "speciesId": "PIKACHU",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "THUNDER_SHOCK_FAST",
-      "chargedMove": "DISCHARGE"
-    },
-    {
-      "speciesId": "DECIDUEYE_HISUIAN",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "MAGICAL_LEAF_FAST",
-      "chargedMove": "TRAILBLAZE"
-    },
-    {
-      "speciesId": "SAMUROTT_HISUIAN",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "WATERFALL_FAST",
-      "chargedMove": "RAZOR_SHELL"
-    },
-    {
-      "speciesId": "TYPHLOSION_HISUIAN",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "HEX_FAST",
-      "chargedMove": "FIRE_PUNCH"
-    },
-    {
-      "speciesId": "XERNEAS",
-      "tier": "5",
-      "shiny": true,
-      "fastMove": "TACKLE_FAST",
-      "chargedMove": "MOONBLAST"
-    },
-    {
-      "speciesId": "MALAMAR",
-      "megaId": "TEMP_EVOLUTION_MEGA",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "PECK_FAST",
+      "fastMove": "CONFUSION_FAST",
       "chargedMove": "PSYBEAM"
     },
     {
-      "speciesId": "VICTREEBEL",
+      "speciesId": "TEDDIURSA",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "SCRATCH_FAST",
+      "chargedMove": "CROSS_CHOP"
+    },
+    {
+      "speciesId": "GOTHITELLE",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "CHARM_FAST",
+      "chargedMove": "ROCK_SLIDE"
+    },
+    {
+      "speciesId": "STARMIE",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "HIDDEN_POWER_FAST",
+      "chargedMove": "HYDRO_PUMP"
+    },
+    {
+      "speciesId": "UMBREON",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "FEINT_ATTACK_FAST",
+      "chargedMove": "DARK_PULSE"
+    },
+    {
+      "speciesId": "DIALGA",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "DRACO_METEOR"
+    },
+    {
+      "speciesId": "YVELTAL",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "SUCKER_PUNCH_FAST",
+      "chargedMove": "DARK_PULSE"
+    },
+    {
+      "speciesId": "BLASTOISE",
       "megaId": "TEMP_EVOLUTION_MEGA",
       "tier": "MEGA",
       "shiny": true,
-      "fastMove": "RAZOR_LEAF_FAST",
-      "chargedMove": "LEAF_BLADE"
-    },
-    {
-      "speciesId": "LAMPENT",
-      "tier": "SHADOW_3",
-      "shiny": true,
-      "fastMove": "ASTONISH_FAST",
-      "chargedMove": "ENERGY_BALL"
-    },
-    {
-      "speciesId": "QUAGSIRE",
-      "tier": "SHADOW_3",
-      "shiny": true,
       "fastMove": "WATER_GUN_FAST",
-      "chargedMove": "SLUDGE_BOMB"
+      "chargedMove": "FLASH_CANNON"
     },
     {
-      "speciesId": "SANDSLASH_ALOLA",
+      "speciesId": "DRAGONITE",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "HURRICANE"
+    },
+    {
+      "speciesId": "DRAPION",
       "tier": "SHADOW_3",
       "shiny": true,
-      "fastMove": "METAL_CLAW_FAST",
-      "chargedMove": "BLIZZARD"
+      "fastMove": "POISON_STING_FAST",
+      "chargedMove": "CRUNCH"
     },
     {
-      "speciesId": "THUNDURUS",
+      "speciesId": "KIRLIA",
+      "tier": "SHADOW_3",
+      "shiny": true,
+      "fastMove": "CONFUSION_FAST",
+      "chargedMove": "PSYCHIC"
+    },
+    {
+      "speciesId": "PRIMEAPE",
+      "tier": "SHADOW_3",
+      "shiny": true,
+      "fastMove": "LOW_KICK_FAST",
+      "chargedMove": "CLOSE_COMBAT"
+    },
+    {
+      "speciesId": "LANDORUS",
       "tier": "SHADOW_5",
       "shiny": true,
-      "fastMove": "ASTONISH_FAST",
-      "chargedMove": "CRUNCH"
+      "fastMove": "MUD_SHOT_FAST",
+      "chargedMove": "EARTH_POWER"
     }
   ]
 }
