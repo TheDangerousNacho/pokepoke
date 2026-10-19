@@ -1,55 +1,55 @@
 {
-  "fetchedAt": "2026-10-12T21:04:35.614Z",
+  "fetchedAt": "2026-10-19T18:31:14.798Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
-      "speciesId": "AMAURA",
+      "speciesId": "BELDUM",
       "tier": "1",
       "shiny": true,
-      "fastMove": "POWDER_SNOW_FAST",
-      "chargedMove": "WEATHER_BALL_ICE"
+      "fastMove": "TAKE_DOWN_FAST",
+      "chargedMove": "IRON_HEAD"
     },
     {
-      "speciesId": "CLEFAIRY",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "POUND_FAST",
-      "chargedMove": "DISARMING_VOICE"
-    },
-    {
-      "speciesId": "ELGYEM",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "CONFUSION_FAST",
-      "chargedMove": "PSYBEAM"
-    },
-    {
-      "speciesId": "TEDDIURSA",
+      "speciesId": "NINCADA",
       "tier": "1",
       "shiny": true,
       "fastMove": "SCRATCH_FAST",
-      "chargedMove": "CROSS_CHOP"
+      "chargedMove": "NIGHT_SLASH"
     },
     {
-      "speciesId": "GOTHITELLE",
+      "speciesId": "SLOWPOKE_GALARIAN",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "CONFUSION_FAST",
+      "chargedMove": "SURF"
+    },
+    {
+      "speciesId": "VOLTORB_HISUIAN",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "CHARGE_BEAM_FAST",
+      "chargedMove": "SWIFT"
+    },
+    {
+      "speciesId": "ARCANINE_HISUIAN",
       "tier": "3",
       "shiny": true,
-      "fastMove": "CHARM_FAST",
+      "fastMove": "FIRE_FANG_FAST",
       "chargedMove": "ROCK_SLIDE"
     },
     {
-      "speciesId": "STARMIE",
+      "speciesId": "KLEAVOR",
       "tier": "3",
       "shiny": true,
-      "fastMove": "HIDDEN_POWER_FAST",
-      "chargedMove": "HYDRO_PUMP"
+      "fastMove": "QUICK_ATTACK_FAST",
+      "chargedMove": "X_SCISSOR"
     },
     {
-      "speciesId": "UMBREON",
+      "speciesId": "SNORLAX",
       "tier": "3",
       "shiny": true,
-      "fastMove": "FEINT_ATTACK_FAST",
-      "chargedMove": "DARK_PULSE"
+      "fastMove": "ZEN_HEADBUTT_FAST",
+      "chargedMove": "HEAVY_SLAM"
     },
     {
       "speciesId": "DIALGA",
@@ -59,19 +59,27 @@
       "chargedMove": "DRACO_METEOR"
     },
     {
-      "speciesId": "YVELTAL",
+      "speciesId": "PALKIA",
       "tier": "5",
       "shiny": true,
-      "fastMove": "SUCKER_PUNCH_FAST",
-      "chargedMove": "DARK_PULSE"
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "DRACO_METEOR"
     },
     {
-      "speciesId": "BLASTOISE",
-      "megaId": "TEMP_EVOLUTION_MEGA",
+      "speciesId": "CHARIZARD",
+      "megaId": "TEMP_EVOLUTION_MEGA_X",
       "tier": "MEGA",
       "shiny": true,
-      "fastMove": "WATER_GUN_FAST",
-      "chargedMove": "FLASH_CANNON"
+      "fastMove": "FIRE_SPIN_FAST",
+      "chargedMove": "FIRE_BLAST"
+    },
+    {
+      "speciesId": "CHARIZARD",
+      "megaId": "TEMP_EVOLUTION_MEGA_Y",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "FIRE_SPIN_FAST",
+      "chargedMove": "FIRE_BLAST"
     },
     {
       "speciesId": "DRAGONITE",
