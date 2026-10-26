@@ -1,62 +1,76 @@
 {
-  "fetchedAt": "2026-10-19T18:31:14.798Z",
+  "fetchedAt": "2026-10-26T18:28:15.387Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
-      "speciesId": "BELDUM",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "TAKE_DOWN_FAST",
-      "chargedMove": "IRON_HEAD"
-    },
-    {
-      "speciesId": "NINCADA",
+      "speciesId": "AXEW",
       "tier": "1",
       "shiny": true,
       "fastMove": "SCRATCH_FAST",
-      "chargedMove": "NIGHT_SLASH"
+      "chargedMove": "DRAGON_CLAW"
     },
     {
-      "speciesId": "SLOWPOKE_GALARIAN",
+      "speciesId": "FRIGIBAX",
       "tier": "1",
-      "shiny": true,
-      "fastMove": "CONFUSION_FAST",
-      "chargedMove": "SURF"
-    },
-    {
-      "speciesId": "VOLTORB_HISUIAN",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "CHARGE_BEAM_FAST",
-      "chargedMove": "SWIFT"
-    },
-    {
-      "speciesId": "ARCANINE_HISUIAN",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "FIRE_FANG_FAST",
-      "chargedMove": "ROCK_SLIDE"
-    },
-    {
-      "speciesId": "KLEAVOR",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "QUICK_ATTACK_FAST",
-      "chargedMove": "X_SCISSOR"
-    },
-    {
-      "speciesId": "SNORLAX",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "ZEN_HEADBUTT_FAST",
-      "chargedMove": "HEAVY_SLAM"
-    },
-    {
-      "speciesId": "DIALGA",
-      "tier": "5",
       "shiny": true,
       "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "DRACO_METEOR"
+      "chargedMove": "DRAGON_CLAW"
+    },
+    {
+      "speciesId": "GOOMY",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "WATER_GUN_FAST",
+      "chargedMove": "DRAGON_PULSE"
+    },
+    {
+      "speciesId": "JANGMO_O",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "TACKLE_FAST",
+      "chargedMove": "DRAGON_CLAW"
+    },
+    {
+      "speciesId": "PIKACHU",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "THUNDER_SHOCK_FAST",
+      "chargedMove": "DISCHARGE"
+    },
+    {
+      "speciesId": "SINISTEA",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "SHADOW_BALL"
+    },
+    {
+      "speciesId": "MUK_ALOLA",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "BITE_FAST",
+      "chargedMove": "DARK_PULSE"
+    },
+    {
+      "speciesId": "NINETALES_ALOLA",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "FEINT_ATTACK_FAST",
+      "chargedMove": "DAZZLING_GLEAM"
+    },
+    {
+      "speciesId": "RAICHU_ALOLA",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "VOLT_SWITCH_FAST",
+      "chargedMove": "PSYCHIC"
+    },
+    {
+      "speciesId": "GIRATINA_ORIGIN",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "DRAGON_PULSE"
     },
     {
       "speciesId": "PALKIA",
@@ -82,12 +96,12 @@
       "chargedMove": "FIRE_BLAST"
     },
     {
-      "speciesId": "DRAGONITE",
+      "speciesId": "SABLEYE",
       "megaId": "TEMP_EVOLUTION_MEGA",
       "tier": "MEGA",
       "shiny": true,
-      "fastMove": "DRAGON_TAIL_FAST",
-      "chargedMove": "HURRICANE"
+      "fastMove": "SHADOW_CLAW_FAST",
+      "chargedMove": "POWER_GEM"
     },
     {
       "speciesId": "DRAPION",
