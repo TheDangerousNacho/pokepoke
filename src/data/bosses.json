@@ -1,35 +1,7 @@
 {
-  "fetchedAt": "2026-10-26T18:28:15.387Z",
+  "fetchedAt": "2026-11-02T21:31:53.010Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
-    {
-      "speciesId": "AXEW",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "SCRATCH_FAST",
-      "chargedMove": "DRAGON_CLAW"
-    },
-    {
-      "speciesId": "FRIGIBAX",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "DRAGON_CLAW"
-    },
-    {
-      "speciesId": "GOOMY",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "WATER_GUN_FAST",
-      "chargedMove": "DRAGON_PULSE"
-    },
-    {
-      "speciesId": "JANGMO_O",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "TACKLE_FAST",
-      "chargedMove": "DRAGON_CLAW"
-    },
     {
       "speciesId": "PIKACHU",
       "tier": "1",
@@ -45,25 +17,46 @@
       "chargedMove": "SHADOW_BALL"
     },
     {
-      "speciesId": "MUK_ALOLA",
+      "speciesId": "COFAGRIGUS",
       "tier": "3",
       "shiny": true,
-      "fastMove": "BITE_FAST",
-      "chargedMove": "DARK_PULSE"
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "SHADOW_BALL"
     },
     {
-      "speciesId": "NINETALES_ALOLA",
+      "speciesId": "DHELMISE",
       "tier": "3",
       "shiny": true,
-      "fastMove": "FEINT_ATTACK_FAST",
-      "chargedMove": "DAZZLING_GLEAM"
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "POWER_WHIP"
     },
     {
-      "speciesId": "RAICHU_ALOLA",
+      "speciesId": "DRUDDIGON",
       "tier": "3",
       "shiny": true,
-      "fastMove": "VOLT_SWITCH_FAST",
-      "chargedMove": "PSYCHIC"
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "DRAGON_CLAW"
+    },
+    {
+      "speciesId": "MACHAMP",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "BULLET_PUNCH_FAST",
+      "chargedMove": "HEAVY_SLAM"
+    },
+    {
+      "speciesId": "ORTHWORM",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "IRON_TAIL_FAST",
+      "chargedMove": "ROCK_TOMB"
+    },
+    {
+      "speciesId": "TREVENANT",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "SHADOW_CLAW_FAST",
+      "chargedMove": "SEED_BOMB"
     },
     {
       "speciesId": "GIRATINA_ORIGIN",
@@ -73,27 +66,18 @@
       "chargedMove": "DRAGON_PULSE"
     },
     {
-      "speciesId": "PALKIA",
+      "speciesId": "ZACIAN_CROWNED_SWORD",
       "tier": "5",
       "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "DRACO_METEOR"
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "PLAY_ROUGH"
     },
     {
-      "speciesId": "CHARIZARD",
-      "megaId": "TEMP_EVOLUTION_MEGA_X",
-      "tier": "MEGA",
+      "speciesId": "ZAMAZENTA_CROWNED_SHIELD",
+      "tier": "5",
       "shiny": true,
-      "fastMove": "FIRE_SPIN_FAST",
-      "chargedMove": "FIRE_BLAST"
-    },
-    {
-      "speciesId": "CHARIZARD",
-      "megaId": "TEMP_EVOLUTION_MEGA_Y",
-      "tier": "MEGA",
-      "shiny": true,
-      "fastMove": "FIRE_SPIN_FAST",
-      "chargedMove": "FIRE_BLAST"
+      "fastMove": "METAL_CLAW_FAST",
+      "chargedMove": "MOONBLAST"
     },
     {
       "speciesId": "SABLEYE",
@@ -130,6 +114,13 @@
       "shiny": true,
       "fastMove": "MUD_SHOT_FAST",
       "chargedMove": "EARTH_POWER"
+    },
+    {
+      "speciesId": "TORNADUS",
+      "tier": "SHADOW_5",
+      "shiny": true,
+      "fastMove": "BITE_FAST",
+      "chargedMove": "GRASS_KNOT"
     }
   ]
 }
