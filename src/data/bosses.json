@@ -1,35 +1,7 @@
 {
-  "fetchedAt": "2026-11-02T21:31:53.010Z",
+  "fetchedAt": "2026-11-09T22:05:26.899Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
-    {
-      "speciesId": "PIKACHU",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "THUNDER_SHOCK_FAST",
-      "chargedMove": "DISCHARGE"
-    },
-    {
-      "speciesId": "SINISTEA",
-      "tier": "1",
-      "shiny": true,
-      "fastMove": "ASTONISH_FAST",
-      "chargedMove": "SHADOW_BALL"
-    },
-    {
-      "speciesId": "COFAGRIGUS",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "ASTONISH_FAST",
-      "chargedMove": "SHADOW_BALL"
-    },
-    {
-      "speciesId": "DHELMISE",
-      "tier": "3",
-      "shiny": true,
-      "fastMove": "ASTONISH_FAST",
-      "chargedMove": "POWER_WHIP"
-    },
     {
       "speciesId": "DRUDDIGON",
       "tier": "3",
@@ -52,18 +24,39 @@
       "chargedMove": "ROCK_TOMB"
     },
     {
-      "speciesId": "TREVENANT",
-      "tier": "3",
+      "speciesId": "CRESSELIA",
+      "tier": "5",
       "shiny": true,
-      "fastMove": "SHADOW_CLAW_FAST",
-      "chargedMove": "SEED_BOMB"
+      "fastMove": "PSYCHO_CUT_FAST",
+      "chargedMove": "AURORA_BEAM"
     },
     {
-      "speciesId": "GIRATINA_ORIGIN",
+      "speciesId": "DARKRAI",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "SNARL_FAST",
+      "chargedMove": "FOCUS_BLAST"
+    },
+    {
+      "speciesId": "KYUREM_BLACK",
       "tier": "5",
       "shiny": true,
       "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "IRON_HEAD"
+    },
+    {
+      "speciesId": "KYUREM_WHITE",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
       "chargedMove": "DRAGON_PULSE"
+    },
+    {
+      "speciesId": "RESHIRAM",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "CRUNCH"
     },
     {
       "speciesId": "ZACIAN_CROWNED_SWORD",
@@ -80,40 +73,40 @@
       "chargedMove": "MOONBLAST"
     },
     {
-      "speciesId": "SABLEYE",
+      "speciesId": "ZEKROM",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "DRAGON_BREATH_FAST",
+      "chargedMove": "OUTRAGE"
+    },
+    {
+      "speciesId": "BANETTE",
       "megaId": "TEMP_EVOLUTION_MEGA",
       "tier": "MEGA",
       "shiny": true,
-      "fastMove": "SHADOW_CLAW_FAST",
-      "chargedMove": "POWER_GEM"
+      "fastMove": "HEX_FAST",
+      "chargedMove": "SHADOW_BALL"
     },
     {
-      "speciesId": "DRAPION",
+      "speciesId": "PILOSWINE",
       "tier": "SHADOW_3",
       "shiny": true,
-      "fastMove": "POISON_STING_FAST",
-      "chargedMove": "CRUNCH"
+      "fastMove": "ICE_SHARD_FAST",
+      "chargedMove": "AVALANCHE"
     },
     {
-      "speciesId": "KIRLIA",
+      "speciesId": "POLIWHIRL",
       "tier": "SHADOW_3",
       "shiny": true,
-      "fastMove": "CONFUSION_FAST",
-      "chargedMove": "PSYCHIC"
+      "fastMove": "BUBBLE_FAST",
+      "chargedMove": "WATER_PULSE"
     },
     {
-      "speciesId": "PRIMEAPE",
+      "speciesId": "PRINPLUP",
       "tier": "SHADOW_3",
       "shiny": true,
-      "fastMove": "LOW_KICK_FAST",
-      "chargedMove": "CLOSE_COMBAT"
-    },
-    {
-      "speciesId": "LANDORUS",
-      "tier": "SHADOW_5",
-      "shiny": true,
-      "fastMove": "MUD_SHOT_FAST",
-      "chargedMove": "EARTH_POWER"
+      "fastMove": "BUBBLE_FAST",
+      "chargedMove": "BUBBLE_BEAM"
     },
     {
       "speciesId": "TORNADUS",
