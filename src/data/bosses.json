@@ -1,27 +1,62 @@
 {
-  "fetchedAt": "2026-11-09T22:05:26.899Z",
+  "fetchedAt": "2026-11-16T21:47:11.063Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
-      "speciesId": "DRUDDIGON",
-      "tier": "3",
+      "speciesId": "MEOWTH_ALOLA",
+      "tier": "1",
       "shiny": true,
-      "fastMove": "DRAGON_TAIL_FAST",
-      "chargedMove": "DRAGON_CLAW"
+      "fastMove": "SCRATCH_FAST",
+      "chargedMove": "NIGHT_SLASH"
     },
     {
-      "speciesId": "MACHAMP",
-      "tier": "3",
+      "speciesId": "MISDREAVUS",
+      "tier": "1",
       "shiny": true,
-      "fastMove": "BULLET_PUNCH_FAST",
-      "chargedMove": "HEAVY_SLAM"
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "SHADOW_SNEAK"
     },
     {
-      "speciesId": "ORTHWORM",
+      "speciesId": "PIKACHU",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "THUNDER_SHOCK_FAST",
+      "chargedMove": "DISCHARGE"
+    },
+    {
+      "speciesId": "SANDYGAST",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "SAND_TOMB"
+    },
+    {
+      "speciesId": "YAMASK_GALARIAN",
+      "tier": "1",
+      "shiny": true,
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "NIGHT_SHADE"
+    },
+    {
+      "speciesId": "GOLURK",
       "tier": "3",
       "shiny": true,
-      "fastMove": "IRON_TAIL_FAST",
-      "chargedMove": "ROCK_TOMB"
+      "fastMove": "ASTONISH_FAST",
+      "chargedMove": "SHADOW_PUNCH"
+    },
+    {
+      "speciesId": "LIEPARD",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "CHARM_FAST",
+      "chargedMove": "GUNK_SHOT"
+    },
+    {
+      "speciesId": "MAROWAK_ALOLA",
+      "tier": "3",
+      "shiny": true,
+      "fastMove": "HEX_FAST",
+      "chargedMove": "BONE_CLUB"
     },
     {
       "speciesId": "CRESSELIA",
@@ -38,46 +73,11 @@
       "chargedMove": "FOCUS_BLAST"
     },
     {
-      "speciesId": "KYUREM_BLACK",
-      "tier": "5",
-      "shiny": true,
-      "fastMove": "DRAGON_TAIL_FAST",
-      "chargedMove": "IRON_HEAD"
-    },
-    {
       "speciesId": "KYUREM_WHITE",
       "tier": "5",
       "shiny": true,
       "fastMove": "DRAGON_BREATH_FAST",
       "chargedMove": "DRAGON_PULSE"
-    },
-    {
-      "speciesId": "RESHIRAM",
-      "tier": "5",
-      "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "CRUNCH"
-    },
-    {
-      "speciesId": "ZACIAN_CROWNED_SWORD",
-      "tier": "5",
-      "shiny": true,
-      "fastMove": "METAL_CLAW_FAST",
-      "chargedMove": "PLAY_ROUGH"
-    },
-    {
-      "speciesId": "ZAMAZENTA_CROWNED_SHIELD",
-      "tier": "5",
-      "shiny": true,
-      "fastMove": "METAL_CLAW_FAST",
-      "chargedMove": "MOONBLAST"
-    },
-    {
-      "speciesId": "ZEKROM",
-      "tier": "5",
-      "shiny": true,
-      "fastMove": "DRAGON_BREATH_FAST",
-      "chargedMove": "OUTRAGE"
     },
     {
       "speciesId": "BANETTE",
@@ -86,6 +86,38 @@
       "shiny": true,
       "fastMove": "HEX_FAST",
       "chargedMove": "SHADOW_BALL"
+    },
+    {
+      "speciesId": "BEEDRILL",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "INFESTATION_FAST",
+      "chargedMove": "SLUDGE_BOMB"
+    },
+    {
+      "speciesId": "HOUNDOOM",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "SNARL_FAST",
+      "chargedMove": "CRUNCH"
+    },
+    {
+      "speciesId": "MANECTRIC",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "SNARL_FAST",
+      "chargedMove": "THUNDER"
+    },
+    {
+      "speciesId": "SABLEYE",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "SHADOW_CLAW_FAST",
+      "chargedMove": "POWER_GEM"
     },
     {
       "speciesId": "PILOSWINE",
