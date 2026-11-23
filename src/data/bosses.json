@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-16T21:47:11.063Z",
+  "fetchedAt": "2026-11-23T23:36:04.298Z",
   "source": "https://fight.pokebattler.com/raids",
   "bosses": [
     {
@@ -73,6 +73,41 @@
       "chargedMove": "FOCUS_BLAST"
     },
     {
+      "speciesId": "DEOXYS_ATTACK",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "ZEN_HEADBUTT_FAST",
+      "chargedMove": "PSYCHO_BOOST"
+    },
+    {
+      "speciesId": "DEOXYS_DEFENSE",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "ZEN_HEADBUTT_FAST",
+      "chargedMove": "PSYCHO_BOOST"
+    },
+    {
+      "speciesId": "DEOXYS_NORMAL",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "ZEN_HEADBUTT_FAST",
+      "chargedMove": "PSYCHO_BOOST"
+    },
+    {
+      "speciesId": "DEOXYS_SPEED",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "ZEN_HEADBUTT_FAST",
+      "chargedMove": "PSYCHO_BOOST"
+    },
+    {
+      "speciesId": "KYUREM_BLACK",
+      "tier": "5",
+      "shiny": true,
+      "fastMove": "DRAGON_TAIL_FAST",
+      "chargedMove": "IRON_HEAD"
+    },
+    {
       "speciesId": "KYUREM_WHITE",
       "tier": "5",
       "shiny": true,
@@ -110,6 +145,14 @@
       "shiny": true,
       "fastMove": "SNARL_FAST",
       "chargedMove": "THUNDER"
+    },
+    {
+      "speciesId": "METAGROSS",
+      "megaId": "TEMP_EVOLUTION_MEGA",
+      "tier": "MEGA",
+      "shiny": true,
+      "fastMove": "BULLET_PUNCH_FAST",
+      "chargedMove": "PSYCHIC"
     },
     {
       "speciesId": "SABLEYE",
